@@ -5,6 +5,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <PackageId>Avalonia.Win32.Interoperability</PackageId>
+    <ExtrasEnableImplicitWinFormsReferences>true</ExtrasEnableImplicitWinFormsReferences>
+    <UseDirect3D9>true</UseDirect3D9>
+    <PackageId>ALTechUK.Avalonia.Win32.Interoperability</PackageId>
+    <ApiDiffPackageId>Avalonia.Win32.Interoperability</ApiDiffPackageId>
   </PropertyGroup>
 
   <ItemGroup>

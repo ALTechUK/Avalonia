@@ -6,6 +6,7 @@
     <MSBuildEnableWorkloadResolver>true</MSBuildEnableWorkloadResolver>
     <DebugType>portable</DebugType>
     <AndroidResgenNamespace>Avalonia.Android.Internal</AndroidResgenNamespace>
+    <PackageId>ALTechUK.Avalonia.Android</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\packages\Avalonia\Avalonia.csproj" />
