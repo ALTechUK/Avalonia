@@ -1,5 +1,10 @@
 To build:
-Run: `nuke --target CiAzureWindows --configuration Release` (see azure-pipelines.yml for info)
+Run: `nuke --target CiAzureWindows --configuration Release --force-nuget-version NUGET_VERSION_GOES_HERE` (see azure-pipelines.yml for info)
+
+To publish:
+`cd artifacts/nuget/`
+`dotnet nuget push *.nupkg --source https://nuget.pkg.github.com/ALTechUK/index.json --api-key YOUR_PAT`
+
 
 ![Star our repo to show support](https://user-images.githubusercontent.com/552074/235945895-1b896994-a0b6-4e7c-a522-c5688c4ec1b9.png)
 ![Header](https://user-images.githubusercontent.com/552074/235865745-2a8e7274-4f66-4f77-8f05-feeb76e7d478.png)
