@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
       <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
-      <PackageId>Avalonia.Desktop</PackageId>
+      <PackageId>ALTechUK.Avalonia.Desktop</PackageId>
+      <ApiDiffPackageId>Avalonia.Desktop</ApiDiffPackageId>
   </PropertyGroup>
 
   <ItemGroup>

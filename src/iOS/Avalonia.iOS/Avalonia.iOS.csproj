@@ -3,6 +3,7 @@
     <TargetFramework>net6.0-ios</TargetFramework>
     <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
     <MSBuildEnableWorkloadResolver>true</MSBuildEnableWorkloadResolver>
+    <PackageId>ALTechUK.Avalonia.iOS</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Avalonia.Base\Avalonia.Base.csproj" />
