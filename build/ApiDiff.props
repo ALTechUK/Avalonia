@@ -1,8 +1,8 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ApiContractPackageVersion>0.10.0</ApiContractPackageVersion>
-    <NugetPackageName Condition="'$(PackageId)' != ''">$(PackageId)</NugetPackageName>
-    <NugetPackageName Condition="'$(PackageId)' == ''">Avalonia</NugetPackageName>
+    <NugetPackageName Condition="'$(ApiDiffPackageId)' != ''">$(ApiDiffPackageId)</NugetPackageName>
+    <NugetPackageName Condition="'$(ApiDiffPackageId)' == ''">Avalonia</NugetPackageName>
     <RunApiCompat Condition="'$(TargetFramework)' == 'net6.0'">false</RunApiCompat>
   </PropertyGroup>
   <ItemGroup>
