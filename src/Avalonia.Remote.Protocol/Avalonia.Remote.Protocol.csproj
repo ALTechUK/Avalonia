@@ -4,7 +4,8 @@
     <DefineConstants>AVALONIA_REMOTE_PROTOCOL;$(DefineConstants)</DefineConstants>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
-    <PackageId>Avalonia.Remote.Protocol</PackageId>
+    <PackageId>ALTechUK.Avalonia.Remote.Protocol</PackageId>
+    <ApiDiffPackageId>Avalonia.Remote.Protocol</ApiDiffPackageId>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Avalonia.Base\Input\Key.cs" />

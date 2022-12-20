@@ -4,6 +4,7 @@
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageId>ALTechUK.Avalonia.Browser</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
