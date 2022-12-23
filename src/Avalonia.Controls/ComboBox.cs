@@ -258,7 +258,7 @@ namespace Avalonia.Controls
                 SetCurrentValue(IsDropDownOpenProperty, false);
                 e.Handled = true;
             }
-            else if (!IsDropDownOpen && (e.Key == Key.Enter || e.Key == Key.Space))
+            else if (!IsDropDownOpen && !IsEditable && (e.Key == Key.Enter || e.Key == Key.Space))
             {
                 SetCurrentValue(IsDropDownOpenProperty, true);
                 e.Handled = true;
@@ -616,14 +616,19 @@ namespace Avalonia.Controls
             string newVal = e.GetNewValue<string>();
             int selectedIdx = -1;
             object? selectedItem = null;
+            string? selectedItemText = null;
             int i = -1;
             foreach (object o in Items)
             {
                 i++;
-                if (string.Equals(newVal, o.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                string? text =
+                    o is IContentControl contentControl ? contentControl.Content?.ToString() : o.ToString();
+
+                if (string.Equals(newVal, text, StringComparison.CurrentCultureIgnoreCase))
                 {
                     selectedIdx = i;
                     selectedItem = o;
+                    selectedItemText = text;
                     break;
                 }
             }
@@ -632,9 +637,8 @@ namespace Avalonia.Controls
             _ignoreNextInputTextUpdate = true;
             SelectedIndex = selectedIdx;
             SelectedItem = selectedItem;
-            //set the text to the Item.ToString() if an item has been selected (or text matched)
             if (settingSelectedItem)
-                Text = SelectedItem?.ToString() ?? newVal;
+                Text = selectedItemText ?? newVal;
             _ignoreNextInputTextUpdate = false;
         }
     }

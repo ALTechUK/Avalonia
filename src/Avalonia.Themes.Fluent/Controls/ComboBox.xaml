@@ -25,6 +25,12 @@
             </sys:Exception>
           </DataValidationErrors.Error>
         </ComboBox>
+
+        <ComboBox SelectedIndex="1" IsEditable="True">
+          <ComboBoxItem>Item A</ComboBoxItem>
+          <ComboBoxItem>Item b</ComboBoxItem>
+          <ComboBoxItem>Item c</ComboBoxItem>
+        </ComboBox>
       </StackPanel>
     </Border>
   </Design.PreviewWith>
@@ -81,16 +87,40 @@
                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                        Margin="{TemplateBinding Padding}"
                        Text="{TemplateBinding PlaceholderText}"
-                       Foreground="{TemplateBinding PlaceholderForeground}"
-                       IsVisible="{TemplateBinding SelectionBoxItem, Converter={x:Static ObjectConverters.IsNull}}" />
+                       Foreground="{TemplateBinding PlaceholderForeground}">
+              <TextBlock.IsVisible>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                  <TemplateBinding Property="SelectionBoxItem" Converter="{x:Static ObjectConverters.IsNull}" />
+                  <TemplateBinding Property="IsEditable" Converter="{x:Static BoolConverters.Not}" />
+                </MultiBinding>
+              </TextBlock.IsVisible>
+            </TextBlock>
             <ContentControl x:Name="ContentPresenter"
                             Content="{TemplateBinding SelectionBoxItem}"
                             ContentTemplate="{TemplateBinding ItemTemplate}"
                             Grid.Column="0"
                             Margin="{TemplateBinding Padding}"
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" 
+                            IsVisible="{TemplateBinding IsEditable, Converter={x:Static BoolConverters.Not}}"/>
 
+            <TextBox Name="PART_InputText"
+								     Grid.Column="0"
+								     Padding="{TemplateBinding Padding}"
+								     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+								     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+								     Foreground="{TemplateBinding Foreground}"
+								     Background="Transparent"
+								     Text="{TemplateBinding Text, Mode=TwoWay}"
+								     BorderThickness="0"
+                     IsVisible="{TemplateBinding IsEditable}">
+              <TextBox.Resources>
+                <SolidColorBrush x:Key="TextControlBackgroundFocused">Transparent</SolidColorBrush>
+                <SolidColorBrush x:Key="TextControlBackgroundPointerOver">Transparent</SolidColorBrush>
+                <Thickness x:Key="TextControlBorderThemeThicknessFocused">0</Thickness>
+              </TextBox.Resources>
+            </TextBox>
+            
             <Border x:Name="DropDownOverlay"
                     Grid.Column="1"
                     Background="Transparent"
