@@ -49,8 +49,8 @@
                        Text="{TemplateBinding PlaceholderText}">
               <TextBlock.IsVisible>
                 <MultiBinding Converter="{x:Static BoolConverters.And}">
-                  <TemplateBinding Property="SelectionBoxItem" Converter="{x:Static ObjectConverters.IsNull}" />
-                  <TemplateBinding Property="IsEditable" Converter="{x:Static BoolConverters.Not}" />
+                  <Binding Path="SelectionBoxItem" RelativeSource="{RelativeSource TemplatedParent}" Converter="{x:Static ObjectConverters.IsNull}" />
+                  <Binding Path="!IsEditable" RelativeSource="{RelativeSource TemplatedParent}" />
                 </MultiBinding>
               </TextBlock.IsVisible>
             </TextBlock>
