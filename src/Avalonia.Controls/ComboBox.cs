@@ -92,6 +92,12 @@ namespace Avalonia.Controls
                 unsetValue: string.Empty,
                 defaultBindingMode: Data.BindingMode.TwoWay);
 
+        /// <summary>
+        /// Defines the <see cref="SelectedItemTemplate"/> property.
+        /// </summary>
+        public static StyledProperty<IDataTemplate?> SelectedItemTemplateProperty =
+            AvaloniaProperty.Register<ComboBox, IDataTemplate?>(nameof(SelectedItemTemplate));
+
         private bool _isDropDownOpen;
         private bool _isEditable;
         private Popup? _popup;
@@ -205,6 +211,15 @@ namespace Avalonia.Controls
         {
             get => _text;
             set => SetAndRaise(TextProperty, ref _text, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the data template used to display the item in the combo box (not the dropdown)
+        /// </summary>
+        public IDataTemplate? SelectedItemTemplate
+        {
+            get => GetValue(SelectedItemTemplateProperty);
+            set => SetValue(SelectedItemTemplateProperty, value);
         }
 
         /// <inheritdoc/>

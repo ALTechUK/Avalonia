@@ -58,7 +58,8 @@
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             Content="{TemplateBinding SelectionBoxItem}"
-                            ContentTemplate="{TemplateBinding ItemTemplate}"
+                            ContentTemplate="{Binding Path=SelectedItemTemplate, RelativeSource={RelativeSource TemplatedParent},
+                                              FallbackValue={TemplateBinding ItemTemplate}}"
                             IsVisible="{TemplateBinding IsEditable, Converter={x:Static BoolConverters.Not}}"/>
             <TextBox Name="PART_InputText"
 								     Grid.Column="0"

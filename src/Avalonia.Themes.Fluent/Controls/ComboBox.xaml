@@ -31,6 +31,19 @@
           <ComboBoxItem>Item b</ComboBoxItem>
           <ComboBoxItem>Item c</ComboBoxItem>
         </ComboBox>
+
+        <ComboBox SelectedIndex="0">
+          <ComboBox.SelectedItemTemplate>
+            <DataTemplate>
+              <Border Padding="20" BorderBrush="Red" BorderThickness="1">
+                <TextBlock Text="{ReflectionBinding}"/>
+              </Border>
+            </DataTemplate>
+          </ComboBox.SelectedItemTemplate>
+          <ComboBoxItem>Item A</ComboBoxItem>
+          <ComboBoxItem>Item b</ComboBoxItem>
+          <ComboBoxItem>Item c</ComboBoxItem>
+        </ComboBox>
       </StackPanel>
     </Border>
   </Design.PreviewWith>
@@ -97,7 +110,8 @@
             </TextBlock>
             <ContentControl x:Name="ContentPresenter"
                             Content="{TemplateBinding SelectionBoxItem}"
-                            ContentTemplate="{TemplateBinding ItemTemplate}"
+                            ContentTemplate="{Binding Path=SelectedItemTemplate, RelativeSource={RelativeSource TemplatedParent},
+                                              FallbackValue={TemplateBinding ItemTemplate}}"
                             Grid.Column="0"
                             Margin="{TemplateBinding Padding}"
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
