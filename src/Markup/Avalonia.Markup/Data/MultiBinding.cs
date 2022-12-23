@@ -83,7 +83,13 @@ namespace Avalonia.Data
                 converter = new StringFormatMultiValueConverter(StringFormat!, converter);
             }
 
-            var children = Bindings.Select(x => x.Initiate(target, null));
+            var children = Bindings.Select(x => 
+            {
+                if (x is TemplateBinding)
+                    return x.Initiate(target, targetProperty);
+                else
+                    return x.Initiate(target, null);
+            });
 
             var input = children.Select(x => x?.Source)
                                 .Where(x => x is not null)!
