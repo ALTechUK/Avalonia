@@ -3,6 +3,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:Class="Sandbox.App">
     <Application.Styles>
-        <FluentTheme Mode="Dark"/>
+      <FluentTheme Mode="Dark"/>
+      <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+      <!--<SimpleTheme Mode="Dark"/>
+        <StyleInclude x:Key="DataGridSimple" Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml" />
+      -->
     </Application.Styles>
 </Application>
