@@ -1,4 +1,51 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
-        x:Class="Sandbox.MainWindow">
+        xmlns:local="using:Sandbox"
+        xmlns:sys="using:System"
+        x:Class="Sandbox.MainWindow"
+        x:DataType="local:ViewModel"
+        Name="root">
+  <!--x:CompileBindings="False"-->
+
+  <StackPanel Spacing="10">
+    
+    <ComboBox Items="{Binding DataGridItems}">
+      <ComboBox.ItemTemplate>
+        <DataTemplate x:DataType="local:DataGridItem">
+          <StackPanel Orientation="Horizontal" Spacing="20">
+            <TextBlock Text="{Binding Name}"/>
+            <TextBlock Text="{Binding Value}"/>            
+          </StackPanel>
+        </DataTemplate>
+      </ComboBox.ItemTemplate>
+
+      <ComboBox.SelectedItemTemplate>
+        <DataTemplate x:DataType="local:DataGridItem">
+          <TextBlock Text="{Binding Value}"/>
+        </DataTemplate>
+      </ComboBox.SelectedItemTemplate>
+      
+    </ComboBox>
+
+    <ComboBox Items="{Binding DataGridItems}">
+      <ComboBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Value}"/>
+        </DataTemplate>
+      </ComboBox.ItemTemplate>
+
+    </ComboBox>
+
+    <DataGrid Items="{Binding DataGridItems}" AutoGenerateColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Name" Binding="{Binding Name}" x:DataType="local:DataGridItem" />
+        <DataGridComboBoxColumn Header="Value" x:DataType="local:DataGridItem"
+                                SelectedItemBinding="{Binding Value}" 
+                                DisplayMemberBinding="{Binding Value}"
+                                Items="{ReflectionBinding #root.DataContext.TextItems}"
+                                />
+      </DataGrid.Columns>
+    </DataGrid>
+    
+  </StackPanel>
 </Window>
