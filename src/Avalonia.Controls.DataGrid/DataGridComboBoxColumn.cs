@@ -121,8 +121,7 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
     {
         ComboBox comboBox = new ComboBox
         {
-            Name = "CellComboBox",
-            SelectedItem = dataItem
+            Name = "CellComboBox"
         };
 
         if (_cellComboBoxTheme.Value is { } theme)
@@ -153,15 +152,6 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
         {
             textBlockElement.Bind(TextBlock.TextProperty, Binding);
         }
-
-
-        //if(DisplayMemberBinding == null)
-        //    textBlockElement.Text = dataItem?.ToString();
-        //else
-        //{
-        //    textBlockElement.DataContext = dataItem;
-        //    textBlockElement.Bind(TextBlock.TextProperty, DisplayMemberBinding, BindingPriority.Style);
-        //}
         return textBlockElement;
 
         Control createFromTemplate(IDataTemplate template) =>
@@ -182,8 +172,8 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
 
     private void SyncProperties(AvaloniaObject content)
     {
+        //using the helper doesn't work for direct properties so set manually
         content.SetValue(ItemsControl.ItemsProperty, Items);
-        //DataGridHelper.SyncColumnProperty(this, content, ItemsProperty);
         DataGridHelper.SyncColumnProperty(this, content, ItemTemplateProperty);
         DataGridHelper.SyncColumnProperty(this, content, SelectedItemTemplateProperty);
         DataGridHelper.SyncColumnProperty(this, content, DisplayMemberBindingProperty);
