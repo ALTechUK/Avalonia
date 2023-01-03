@@ -95,7 +95,7 @@ namespace Avalonia.Controls
         /// <summary>
         /// Defines the <see cref="SelectedItemTemplate"/> property.
         /// </summary>
-        public static StyledProperty<IDataTemplate?> SelectedItemTemplateProperty =
+        public static readonly StyledProperty<IDataTemplate?> SelectedItemTemplateProperty =
             AvaloniaProperty.Register<ComboBox, IDataTemplate?>(nameof(SelectedItemTemplate));
 
         private bool _isDropDownOpen;

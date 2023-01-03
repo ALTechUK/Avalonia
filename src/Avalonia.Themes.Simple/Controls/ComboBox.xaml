@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:avaloniaData="using:Avalonia.Data"
                     x:ClassModifier="internal">
   <Design.PreviewWith>
     <Border Padding="20">
@@ -58,9 +59,15 @@
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             Content="{TemplateBinding SelectionBoxItem}"
-                            ContentTemplate="{Binding Path=SelectedItemTemplate, RelativeSource={RelativeSource TemplatedParent},
-                                              FallbackValue={TemplateBinding ItemTemplate}}"
-                            IsVisible="{TemplateBinding IsEditable, Converter={x:Static BoolConverters.Not}}"/>
+                            IsVisible="{TemplateBinding IsEditable, Converter={x:Static BoolConverters.Not}}">
+              <ContentControl.ContentTemplate>
+                <PriorityBinding>
+                  <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="SelectedItemTemplate"
+                           TargetNullValue="{x:Static avaloniaData:BindingOperations.DoNothing}" />
+                  <TemplateBinding Property="ItemTemplate" />
+                </PriorityBinding>
+              </ContentControl.ContentTemplate>
+            </ContentControl>
             <TextBox Name="PART_InputText"
 								     Grid.Column="0"
 								     Padding="{TemplateBinding Padding}"
