@@ -9,8 +9,12 @@ using Avalonia.Metadata;
 namespace Avalonia.Data
 {
     /// <summary>
-    /// A XAML binding that calculates an aggregate value from multiple child <see cref="Bindings"/>.
+    /// A XAML binding that uses the first valid result from multiple child <see cref="Bindings"/>.
     /// </summary>
+    /// <remarks>
+    /// A valid biding result is anything other than <see cref="BindingOperations.DoNothing"/> 
+    /// and <see cref="AvaloniaProperty.UnsetValue"/>.
+    /// </remarks>
     public class PriorityBinding : IBinding
     {
         /// <summary>
@@ -87,23 +91,38 @@ namespace Avalonia.Data
                     return InstancedBinding.OneWay(input, Priority);
                 default:
                     throw new NotSupportedException(
-                        "MultiBinding currently only supports OneTime and OneWay BindingMode.");
+                        "PriorityBinding currently only supports OneTime and OneWay BindingMode.");
             }
         }
 
         object? BoundValuesGetFirstOrDefault(IList<object?> values)
         {
-            foreach(object? i in values)
+            object? result = null;
+            foreach (object? i in values)
             {
                 object? value = i;
-                if(value is BindingNotification notification)
+                if (value is BindingNotification notification)
+                {
                     value = notification.Value;
+                }
 
                 if (value != AvaloniaProperty.UnsetValue && value != BindingOperations.DoNothing)
-                    return value;
+                {
+                    result = value;
+                }
             }
 
-            return null;
+            if (result == null)
+            {
+                result = TargetNullValue;
+            }
+
+            if (result == AvaloniaProperty.UnsetValue)
+            {
+                result = FallbackValue;
+            }
+
+            return result;
         }
     }
 }
