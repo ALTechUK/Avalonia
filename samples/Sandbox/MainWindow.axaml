@@ -7,7 +7,26 @@
         Name="root">
   <!--x:CompileBindings="False"-->
 
+  <NativeMenu.Menu>
+    <NativeMenu>
+      <NativeMenuItem Header="File">
+        <NativeMenu>
+          <NativeMenuItem Header="Open" Gesture="Ctrl+O"/>
+          <NativeMenuItemSeparator/>
+          <NativeMenuItem Header="Recent">
+            <NativeMenu/>
+          </NativeMenuItem>
+          <NativeMenuItemSeparator/>
+          <NativeMenuItem Header="E_xit"
+                          Gesture="Alt+F4"
+                          Click="CloseClick" />
+        </NativeMenu>
+      </NativeMenuItem>
+    </NativeMenu>
+  </NativeMenu.Menu>
+  
   <StackPanel Spacing="10">
+    <NativeMenuBar/>
     <TextBlock Text="{Binding Selected.Name, StringFormat=Sel Name: {0}}"/>
     <TextBlock Text="{Binding SelectedTextItem, StringFormat=Sel Text: {0}}"/>
     
@@ -38,7 +57,7 @@
 
     <ComboBox Items="{Binding TextItems}" SelectedItem="{Binding SelectedTextItem}"/>
 
-    <DataGrid Items="{Binding DataGridItems}" AutoGenerateColumns="False">
+    <DataGrid Items="{Binding DataGridItems}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Disabled">
       <DataGrid.Columns>
         <DataGridTextColumn Header="Name" Binding="{Binding Name}" x:DataType="local:DataGridItem" />
         <DataGridComboBoxColumn Header="Value" x:DataType="local:DataGridItem"

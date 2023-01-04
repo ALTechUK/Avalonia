@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
@@ -12,6 +13,11 @@ namespace Sandbox
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        public void CloseClick(object sender, EventArgs args)
+        {
+            Close();
         }
     }
 }
