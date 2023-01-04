@@ -115,7 +115,6 @@ namespace Avalonia.Controls
             ItemsPanelProperty.OverrideDefaultValue<ComboBox>(DefaultPanel);
             FocusableProperty.OverrideDefaultValue<ComboBox>(true);
             IsTextSearchEnabledProperty.OverrideDefaultValue<ComboBox>(true);
-            IsDropDownOpenProperty.Changed.AddClassHandler<ComboBox>((x, e) => x.IsDropdownOpenChanged(e));
             TextProperty.Changed.AddClassHandler<ComboBox>((x, e) => x.TextChanged(e));
             //when the items change we need to simulate a text change to validate the text being an item or not and selecting it
             ItemsProperty.Changed.AddClassHandler<ComboBox>((x, e) => x.TextChanged(
@@ -214,7 +213,7 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
-        /// Gets or sets the data template used to display the item in the combo box (not the dropdown)
+        /// Gets or sets the data template used to display the item in the combo box when collapsed
         /// </summary>
         public IDataTemplate? SelectedItemTemplate
         {
@@ -400,6 +399,7 @@ namespace Avalonia.Controls
             {
                 UpdateSelectionBoxItem(change.NewValue);
                 TryFocusSelectedItem();
+                UpdateInputTextFromSelection(change.NewValue);
             }
             else if (change.Property == IsDropDownOpenProperty)
             {
@@ -458,13 +458,6 @@ namespace Avalonia.Controls
             {
                 SetCurrentValue(IsDropDownOpenProperty, false);
             }
-        }
-
-        private void SelectedItemChanged(AvaloniaPropertyChangedEventArgs e)
-        {
-            UpdateSelectionBoxItem(e.NewValue);
-            TryFocusSelectedItem();
-            UpdateInputTextFromSelection(e.NewValue);
         }
 
         private void TryFocusSelectedItem()
@@ -616,12 +609,6 @@ namespace Avalonia.Controls
             }
         }
 
-        private void IsDropdownOpenChanged(AvaloniaPropertyChangedEventArgs e)
-        {
-            bool newValue = e.GetNewValue<bool>();
-            PseudoClasses.Set(pcDropdownOpen, newValue);
-        }
-
         private void TextChanged(AvaloniaPropertyChangedEventArgs e)
         {
             //don't check for an item if there are no items or if we are already processing a change
@@ -636,8 +623,9 @@ namespace Avalonia.Controls
             foreach (object o in Items)
             {
                 i++;
-                string? text =
-                    o is IContentControl contentControl ? contentControl.Content?.ToString() : o.ToString();
+                string? text = o is IContentControl contentControl 
+                    ? contentControl.Content?.ToString() 
+                    : o.ToString();
 
                 if (string.Equals(newVal, text, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -647,7 +635,7 @@ namespace Avalonia.Controls
                     break;
                 }
             }
-            bool settingSelectedItem = SelectedIndex == -1 && selectedIdx > -1;
+            bool settingSelectedItem = selectedIdx > -1 && SelectedIndex != selectedIdx;
 
             _ignoreNextInputTextUpdate = true;
             SelectedIndex = selectedIdx;

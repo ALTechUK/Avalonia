@@ -126,14 +126,14 @@
             </ContentControl>
 
             <TextBox Name="PART_InputText"
-								     Grid.Column="0"
-								     Padding="{TemplateBinding Padding}"
-								     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-								     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-								     Foreground="{TemplateBinding Foreground}"
-								     Background="Transparent"
-								     Text="{TemplateBinding Text, Mode=TwoWay}"
-								     BorderThickness="0"
+                     Grid.Column="0"
+                     Padding="{TemplateBinding Padding}"
+                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                     Foreground="{TemplateBinding Foreground}"
+                     Background="Transparent"
+                     Text="{TemplateBinding Text, Mode=TwoWay}"
+                     BorderThickness="0"
                      IsVisible="{TemplateBinding IsEditable}">
               <TextBox.Resources>
                 <SolidColorBrush x:Key="TextControlBackgroundFocused">Transparent</SolidColorBrush>
