@@ -58,7 +58,7 @@ namespace Avalonia.Data
             bool enableDataValidation = false)
         {
             var targetType = targetProperty?.PropertyType ?? typeof(object);
-            IValueConverter converter = null;
+            IValueConverter? converter = null;
             // We only respect `StringFormat` if the type of the property we're assigning to will
             // accept a string. Note that this is slightly different to WPF in that WPF only applies
             // `StringFormat` for target type `string` (not `object`).
@@ -74,8 +74,6 @@ namespace Avalonia.Data
                                 .Where(x => x is not null)
                                 .CombineLatest()
                                 .Select(BoundValuesGetFirstOrDefault)
-                                //.Select(x => x.Where(x => x != AvaloniaProperty.UnsetValue && x != BindingOperations.DoNothing)
-                                //              .FirstOrDefault())
                                 .Select(x => converter == null ? x : converter.Convert(x, targetType, null, CultureInfo.CurrentCulture));
 
             var mode = Mode == BindingMode.Default ?
