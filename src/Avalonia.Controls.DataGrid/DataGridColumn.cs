@@ -641,7 +641,7 @@ namespace Avalonia.Controls
 
         public Control GetCellContent(DataGridRow dataGridRow)
         {
-            Contract.Requires<ArgumentNullException>(dataGridRow != null);
+            dataGridRow = dataGridRow ?? throw new ArgumentNullException(nameof(dataGridRow));
             if (OwningGrid == null)
             {
                 throw DataGridError.DataGrid.NoOwningGrid(GetType());
@@ -659,7 +659,7 @@ namespace Avalonia.Controls
 
         public Control GetCellContent(object dataItem)
         {
-            Contract.Requires<ArgumentNullException>(dataItem != null);
+            dataItem = dataItem ?? throw new ArgumentNullException(nameof(dataItem));
             if (OwningGrid == null)
             {
                 throw DataGridError.DataGrid.NoOwningGrid(GetType());
@@ -897,7 +897,7 @@ namespace Avalonia.Controls
             result[!ContentControl.ContentTemplateProperty] = this[!HeaderTemplateProperty];
             if (OwningGrid.ColumnHeaderTheme is {} columnTheme)
             {
-                result.SetValue(StyledElement.ThemeProperty, columnTheme, BindingPriority.TemplatedParent);
+                result.SetValue(StyledElement.ThemeProperty, columnTheme, BindingPriority.Template);
             }
 
             return result;
