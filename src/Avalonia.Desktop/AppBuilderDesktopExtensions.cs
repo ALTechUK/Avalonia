@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Compatibility;
 using Avalonia.Controls;
 using Avalonia.Logging;
@@ -20,12 +21,11 @@ namespace Avalonia
                 LoadWin32(builder);
                 LoadSkia(builder);
             }
-            else if(OperatingSystemEx.IsMacOS())
+            /*else if(OperatingSystemEx.IsMacOS())
             {
-                throw new System.PlatformNotSupportedException();
-                //LoadAvaloniaNative(builder);
-                //LoadSkia(builder);
-            }
+                LoadAvaloniaNative(builder);
+                LoadSkia(builder);
+            }*/
             else if (OperatingSystemEx.IsLinux())
             {
                 LoadX11(builder);
@@ -42,7 +42,7 @@ namespace Avalonia
 
         /*static void LoadAvaloniaNative(AppBuilder builder)
              => builder.UseAvaloniaNative();*/
-        static void LoadWin32<AppBuilder>(AppBuilder builder)
+        static void LoadWin32(AppBuilder builder)
              => builder.UseWin32();
 
         static void LoadX11(AppBuilder builder)
