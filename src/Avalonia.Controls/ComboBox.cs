@@ -405,6 +405,10 @@ namespace Avalonia.Controls
             {
                 PseudoClasses.Set(pcDropdownOpen, change.GetNewValue<bool>());
             }
+            else if (change.Property == IsEditableProperty && change.GetNewValue<bool>())
+            {
+                UpdateInputTextFromSelection(SelectedItem);
+            }
 
             base.OnPropertyChanged(change);
         }
@@ -611,8 +615,7 @@ namespace Avalonia.Controls
 
         private void TextChanged(AvaloniaPropertyChangedEventArgs e)
         {
-            //don't check for an item if there are no items or if we are already processing a change
-            if (Items == null || _ignoreNextInputTextUpdate)
+            if (Items == null || !IsEditable || _ignoreNextInputTextUpdate)
                 return;
 
             string newVal = e.GetNewValue<string>();
@@ -620,12 +623,12 @@ namespace Avalonia.Controls
             object? selectedItem = null;
             string? selectedItemText = null;
             int i = -1;
-            foreach (object o in Items)
+            foreach (object? o in Items)
             {
                 i++;
                 string? text = o is IContentControl contentControl 
                     ? contentControl.Content?.ToString() 
-                    : o.ToString();
+                    : o?.ToString();
 
                 if (string.Equals(newVal, text, StringComparison.CurrentCultureIgnoreCase))
                 {
