@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
@@ -17,6 +18,11 @@ namespace Sandbox
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        public void CloseClick(object sender, EventArgs args)
+        {
+            Close();
         }
     }
 }
