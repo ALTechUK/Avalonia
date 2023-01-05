@@ -172,6 +172,36 @@ namespace Avalonia.Controls
         }
 
         /// <summary>
+        /// Identifies the CanUserAddRows dependency property.
+        /// </summary>
+        public static readonly StyledProperty<bool> CanUserAddRowsProperty =
+            AvaloniaProperty.Register<DataGrid, bool>(nameof(CanUserAddRows));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the user can add rows.
+        /// </summary>
+        public bool CanUserAddRows
+        {
+            get { return GetValue(CanUserAddRowsProperty); }
+            set { SetValue(CanUserAddRowsProperty, value); }
+        }
+
+        /// <summary>
+        /// Identifies the CanUserDeleteRows dependency property.
+        /// </summary>
+        public static readonly StyledProperty<bool> CanUserDeleteRowsProperty =
+            AvaloniaProperty.Register<DataGrid, bool>(nameof(CanUserDeleteRows));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the user can delete rows.
+        /// </summary>
+        public bool CanUserDeleteRows
+        {
+            get { return GetValue(CanUserDeleteRowsProperty); }
+            set { SetValue(CanUserDeleteRowsProperty, value); }
+        }
+
+        /// <summary>
         /// Identifies the CanUserResizeColumns dependency property.
         /// </summary>
         public static readonly StyledProperty<bool> CanUserResizeColumnsProperty =
@@ -4205,8 +4235,10 @@ namespace Avalonia.Controls
             {
                 return true;
             }
-            if (_editingColumnIndex != -1 || (editAction == DataGridEditAction.Cancel && raiseEvents &&
-                !((DataConnection.EditableCollectionView != null && DataConnection.EditableCollectionView.CanCancelEdit) || (EditingRow.DataContext is IEditableObject))))
+            if (_editingColumnIndex != -1 || 
+                (editAction == DataGridEditAction.Cancel && raiseEvents &&
+                !((DataConnection.EditableCollectionView != null && (DataConnection.EditableCollectionView.CanCancelEdit || DataConnection.EditableCollectionView.IsAddingNew))
+                 || (EditingRow.DataContext is IEditableObject))))
             {
                 // Ending the row edit will fail immediately under the following conditions:
                 // 1. We haven't ended the cell edit yet.
