@@ -352,8 +352,13 @@ namespace Avalonia.Controls
         protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
             //if the user clicked in the input text we don't want to open the dropdown
-            if (!e.Handled && e.Source is StyledElement styledSource && styledSource.TemplatedParent == _inputText)
+            if (_inputText != null 
+                && !e.Handled 
+                && e.Source is StyledElement styledSource 
+                && styledSource.TemplatedParent == _inputText)
+            {
                 return;
+            }
 
             if (!e.Handled && e.Source is Visual source)
             {

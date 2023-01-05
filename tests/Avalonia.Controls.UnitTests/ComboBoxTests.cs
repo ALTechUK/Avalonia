@@ -202,6 +202,10 @@ namespace Avalonia.Controls.UnitTests
                             {
                                 Name = "PART_ItemsPresenter",
                             }.RegisterInNameScope(scope)
+                        }.RegisterInNameScope(scope),
+                        new TextBox
+                        {
+                            Name = "PART_InputText"
                         }.RegisterInNameScope(scope)
                     }
                 };
