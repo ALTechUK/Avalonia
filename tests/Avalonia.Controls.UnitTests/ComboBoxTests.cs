@@ -206,6 +206,10 @@ namespace Avalonia.Controls.UnitTests
                                 Name = "PART_ItemsPresenter",
                                 [!ItemsPresenter.ItemsProperty] = parent[!ComboBox.ItemsProperty],
                             }.RegisterInNameScope(scope)
+                        }.RegisterInNameScope(scope),
+                        new TextBox
+                        {
+                            Name = "PART_InputText"
                         }.RegisterInNameScope(scope)
                     }
                 };
