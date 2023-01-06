@@ -148,7 +148,7 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
             textBlockElement.Theme = theme;        
         }
 
-        if (Binding != null)
+        if (Binding != null && dataItem != DataGridCollectionView.NewItemPlaceholder)
         {
             textBlockElement.Bind(TextBlock.TextProperty, Binding);
         }
