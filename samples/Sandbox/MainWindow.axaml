@@ -4,7 +4,7 @@
         xmlns:sys="using:System"
         x:Class="Sandbox.MainWindow"
         x:DataType="local:ViewModel"
-        Name="root">
+        Name="root" Width="500" Height="500">
   <!--x:CompileBindings="False"-->
 
   <NativeMenu.Menu>
@@ -57,18 +57,33 @@
 
     <ComboBox Items="{Binding TextItems}" SelectedItem="{Binding SelectedTextItem}"/>
 
-    <DataGrid Items="{Binding DataGridItems}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Disabled">
-      <DataGrid.Columns>
-        <DataGridTextColumn Header="Name" Binding="{Binding Name}" x:DataType="local:DataGridItem" />
-        <DataGridComboBoxColumn Header="Value" x:DataType="local:DataGridItem"
-                                SelectedItemBinding="{Binding Value}" 
-                                Items="{ReflectionBinding $parent.DataContext.TextItems}"
-                                />
-                                <!--We're binding items to a string list not DataGridItem so no need for display member binding
-                                selected item binding takes care of that
-                                DisplayMemberBinding="{Binding Value}"-->
-      </DataGrid.Columns>
-    </DataGrid>
+    <StackPanel Orientation="Horizontal">
+      <DataGrid Items="{Binding DataGridItems}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Disabled"
+                CanUserAddRows="true" CanUserDeleteRows="True">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Name" Binding="{Binding Name}" x:DataType="local:DataGridItem" />
+          <DataGridComboBoxColumn Header="Value" x:DataType="local:DataGridItem"
+                                  SelectedItemBinding="{Binding Value}" 
+                                  Items="{ReflectionBinding $parent.DataContext.TextItems}"
+                                  />
+                                  <!--We're binding items to a string list not DataGridItem so no need for display member binding
+                                  selected item binding takes care of that
+                                  DisplayMemberBinding="{Binding Value}"-->
+        </DataGrid.Columns>
+      </DataGrid>
+
+      <ListBox Items="{Binding DataGridItems}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="local:DataGridItem">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="{Binding Name, TargetNullValue=Blank}"/>
+              <TextBlock Text=" : "/>
+              <TextBlock Text="{Binding Value, TargetNullValue=Blank}"/>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </StackPanel>
     
   </StackPanel>
 </Window>
