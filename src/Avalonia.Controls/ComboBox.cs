@@ -676,7 +676,6 @@ namespace Avalonia.Controls
                     (data, s) =>
                     {
                         TextBlock result = new();
-                        //result.Bind(DataContextProperty, result.GetObservable(DataContextProperty), BindingPriority.Style);
                         result.Bind(TextBlock.TextProperty, DisplayMemberBinding, BindingPriority.Style);
                         return result;                        
                     }, true);
