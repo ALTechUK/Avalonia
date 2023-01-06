@@ -13,7 +13,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
-using Avalonia.Utilities;
 using Avalonia.Controls.Utils;
 
 namespace Avalonia.Controls
@@ -201,6 +200,15 @@ namespace Avalonia.Controls
                 && !(EditableCollectionView?.IsAddingNew ?? false);
         }
 
+        public bool CanRemove
+        {
+            get => _owner.CanUserDeleteRows
+                && (
+                    (EditableCollectionView?.CanRemove ?? false)
+                    || (!List?.IsReadOnly ?? false)
+                );
+        }
+
         /// <summary>Try get number of DataSource itmes.</summary>
         /// <param name="allowSlow">When "allowSlow" is false, method will not use Linq.Count() method and will return 0 or 1 instead.</param>
         /// <param name="getAny">If "getAny" is true, method can use Linq.Any() method to speedup.</param>
@@ -295,7 +303,7 @@ namespace Avalonia.Controls
                     editableCollectionView.CancelNew();
                     CommittingEdit = false;
                     //now add the blank new row back in 
-                    _owner.InsertRowAt(_owner.SlotCount);
+                    AddNewItemRow(_owner.SlotCount);
                     return true;
                 }
                 return false;
@@ -354,7 +362,7 @@ namespace Avalonia.Controls
                     if (editableCollectionView.IsAddingNew)
                     {
                         editableCollectionView.CommitNew();
-                        _owner.InsertRowAt(_owner.SlotCount);
+                        AddNewItemRow(_owner.SlotCount);
                     }
                     else
                     {
@@ -759,6 +767,31 @@ namespace Avalonia.Controls
             {
                 _dataProperties = null;
             }
+        }
+
+        private void AddNewItemRow(int slot)
+        {
+            _owner.InsertRowAt(slot);
+            //since the row might have been resused we need to clear it out by remaking the content so it doesn't show 
+            //stale binding values
+            DataGridRow row = _owner.GetRowFromItem(DataGridCollectionView.NewItemPlaceholder);
+            if(row.IsRecycled)
+                foreach (DataGridCell cell in row.Cells)
+                    cell.Content = cell.OwningColumn.GenerateElementInternal(cell, DataGridCollectionView.NewItemPlaceholder);
+        }
+
+        /// <summary>
+        /// Remove an item from the underlying <see cref="DataSource"/>
+        /// </summary>
+        /// <returns></returns>
+        internal void Remove(object item)
+        {
+            if (EditableCollectionView != null)
+                EditableCollectionView.Remove(item);
+            else if (List != null && !List.IsReadOnly)
+                List.Remove(item);
+            else
+                throw new NotSupportedException("Underlaying data source does not support modifications");
         }
     }
 }
