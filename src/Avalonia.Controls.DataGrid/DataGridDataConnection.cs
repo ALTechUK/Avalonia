@@ -430,31 +430,10 @@ namespace Avalonia.Controls
             {
                 if (!String.IsNullOrEmpty(propertyName))
                 {
-                    Type propertyType = DataType;
-                    PropertyInfo propertyInfo = null;
-                    List<string> propertyNames = TypeHelper.SplitPropertyPath(propertyName);
-                    for (int i = 0; i < propertyNames.Count; i++)
-                    {
-                        propertyInfo = propertyType.GetPropertyOrIndexer(propertyNames[i], out _);
-                        if (propertyInfo == null || propertyType.GetIsReadOnly() || propertyInfo.GetIsReadOnly())
-                        {
-                            // Either the data type is read-only, the property doesn't exist, or it does exist but is read-only
-                            return true;
-                        }
+                    if (PropertyIsReadOnly(propertyName, out Type propertyType))
+                        return true;
 
-                        // Check if EditableAttribute is defined on the property and if it indicates uneditable
-                        var attributes = propertyInfo.GetCustomAttributes(typeof(EditableAttribute), true);
-                        if (attributes != null && attributes.Length > 0)
-                        {
-                            var editableAttribute = (EditableAttribute)attributes[0];
-                            if (!editableAttribute.AllowEdit)
-                            {
-                                return true;
-                            }
-                        }
-                        propertyType = propertyInfo.PropertyType.GetNonNullableType();
-                    }
-                    return propertyInfo == null || !propertyInfo.CanWrite || !AllowEdit || !CanEdit(propertyType);
+                    return !AllowEdit || !CanEdit(propertyType);
                 }
                 else if (DataType.GetIsReadOnly())
                 {
@@ -462,6 +441,42 @@ namespace Avalonia.Controls
                 }
             }
             return !AllowEdit;
+        }
+
+        internal bool PropertyIsReadOnly(string propertyName, out Type? propertyType) 
+        {
+            propertyType = null;
+            if (DataType == null)
+                return true;
+
+            if (string.IsNullOrEmpty(propertyName))
+                return true;
+
+            propertyType = DataType;
+            PropertyInfo propertyInfo = null;
+            List<string> propertyNames = TypeHelper.SplitPropertyPath(propertyName);
+            for (int i = 0; i < propertyNames.Count; i++)
+            {
+                propertyInfo = propertyType.GetPropertyOrIndexer(propertyNames[i], out _);
+                if (propertyInfo == null || propertyType.GetIsReadOnly() || propertyInfo.GetIsReadOnly())
+                {
+                    // Either the data type is read-only, the property doesn't exist, or it does exist but is read-only
+                    return true;
+                }
+
+                // Check if EditableAttribute is defined on the property and if it indicates uneditable
+                var attributes = propertyInfo.GetCustomAttributes(typeof(EditableAttribute), true);
+                if (attributes != null && attributes.Length > 0)
+                {
+                    var editableAttribute = (EditableAttribute)attributes[0];
+                    if (!editableAttribute.AllowEdit)
+                    {
+                        return true;
+                    }
+                }
+                propertyType = propertyInfo.PropertyType.GetNonNullableType();
+            }
+            return propertyInfo == null || !propertyInfo.CanWrite;
         }
 
         public int IndexOf(object dataItem)

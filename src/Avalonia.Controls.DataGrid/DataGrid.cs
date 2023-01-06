@@ -4177,14 +4177,22 @@ namespace Avalonia.Controls
                 }
 
                 var editBinding = CurrentColumn?.CellEditBinding;
-                if (editBinding != null && !editBinding.CommitEdit())
+                if (editBinding != null)
                 {
-                    SetValidationStatus(editBinding);
-                    _validationSubscription?.Dispose();
-                    _validationSubscription = editBinding.ValidationChanged.Subscribe(v => SetValidationStatus(editBinding));
+                    //there's a chance that commiting this edit will cause a focus loss which triggers a commit cycle of its own
+                    //so if that happens we can safely bail out here
+                    bool commitOk = editBinding.CommitEdit();
+                    if (commitOk && EditingRow == null)
+                        return false;
+                    else
+                    {
+                        SetValidationStatus(editBinding);
+                        _validationSubscription?.Dispose();
+                        _validationSubscription = editBinding.ValidationChanged.Subscribe(v => SetValidationStatus(editBinding));
 
-                    ScrollSlotIntoView(CurrentColumnIndex, CurrentSlot, forCurrentCellChange: false, forceHorizontalScroll: true);
-                    return false;
+                        ScrollSlotIntoView(CurrentColumnIndex, CurrentSlot, forCurrentCellChange: false, forceHorizontalScroll: true);
+                        return false;
+                    }
                 }
             }
 
