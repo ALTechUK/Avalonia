@@ -90,7 +90,7 @@
       </TabItem>
       <TabItem x:Name="EditableTab" Header="Editable">
         <Grid RowDefinitions="*,Auto">
-          <DataGrid Name="dataGridEdit" Margin="12" Grid.Row="0">
+          <DataGrid Name="dataGridEdit" Margin="12" Grid.Row="0" CanUserDeleteRows="True" CanUserAddRows="True">
             <DataGrid.Columns>
               <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="2*" FontSize="{Binding #FontSizeSlider.Value, Mode=OneWay}" x:DataType="local:Person" />
               <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="2*" FontSize="{Binding #FontSizeSlider.Value, Mode=OneWay}" x:DataType="local:Person" />

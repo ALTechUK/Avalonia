@@ -4746,6 +4746,9 @@ namespace Avalonia.Controls
 
                 case Key.Insert:
                     return ProcessCopyKey(e.KeyModifiers);
+
+                case Key.Delete:
+                    return ProcessDeleteKey();
             }
             if (focusDataGrid)
             {
@@ -5491,6 +5494,28 @@ namespace Avalonia.Controls
                 NoSelectionChangeCount--;
             }
             return _successfullyUpdatedSelection;
+        }
+
+        private bool ProcessDeleteKey()
+        {
+            if(!DataConnection.CanRemove)
+                return false;
+
+            object[] toRemove = _selectedItems.OfType<object>()
+                .Where(context => context != DataGridCollectionView.NewItemPlaceholder)
+                .ToArray();
+
+            if (toRemove.Length == 0)
+                return false;
+
+            //make sure to commit any edits since rows are going to move (this should be covered by the CanRemove check anyway)
+            if (!EndRowEdit(DataGridEditAction.Commit, true, true))
+                return false;
+            
+            foreach (object item in toRemove)
+                DataConnection.Remove(item);
+
+            return true;
         }
 
         private void RemoveDisplayedColumnHeader(DataGridColumn dataGridColumn)
