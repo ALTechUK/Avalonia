@@ -11,6 +11,9 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Reactive;
 using Avalonia.VisualTree;
+using Avalonia.Controls.Metadata;
+using System.Reactive.Linq;
+using Avalonia.Data;
 
 namespace Avalonia.Controls
 {
@@ -414,6 +417,12 @@ namespace Avalonia.Controls
             {
                 UpdateInputTextFromSelection(SelectedItem);
             }
+            else if(change.Property == SelectedItemTemplateProperty
+                 || change.Property == ItemTemplateProperty 
+                 || change.Property == DisplayMemberBindingProperty)
+            {
+                CheckAndUpdateSelectedItemTemplate();
+            }
 
             base.OnPropertyChanged(change);
         }
@@ -651,6 +660,27 @@ namespace Avalonia.Controls
             if (settingSelectedItem)
                 Text = selectedItemText ?? newVal;
             _ignoreNextInputTextUpdate = false;
+        }
+
+        /// <summary>
+        /// If the <see cref="SelectedItemTemplate"/> is null and the <see cref="ItemsControl.DisplayMemberBinding"/>
+        /// is something then set the template to use the display member
+        /// </summary>
+        private void CheckAndUpdateSelectedItemTemplate()
+        {
+            if(SelectedItemTemplate == null && ItemTemplate == null && DisplayMemberBinding != null)
+            {
+                //similar to the FuncDataTemplate.Default, but instead of binding the text to the datacontext,
+                //we bind the text the same way ItemContainerGenerator does it
+                SelectedItemTemplate = new FuncDataTemplate<object?>(
+                    (data, s) =>
+                    {
+                        TextBlock result = new();
+                        //result.Bind(DataContextProperty, result.GetObservable(DataContextProperty), BindingPriority.Style);
+                        result.Bind(TextBlock.TextProperty, DisplayMemberBinding, BindingPriority.Style);
+                        return result;                        
+                    }, true);
+            }
         }
     }
 }
