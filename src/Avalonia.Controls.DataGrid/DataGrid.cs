@@ -4184,7 +4184,7 @@ namespace Avalonia.Controls
                     bool commitOk = editBinding.CommitEdit();
                     if (commitOk && EditingRow == null)
                         return false;
-                    else
+                    else if(!commitOk)
                     {
                         SetValidationStatus(editBinding);
                         _validationSubscription?.Dispose();
