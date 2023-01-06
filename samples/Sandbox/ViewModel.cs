@@ -37,10 +37,20 @@ public class ViewModel : ViewModelBase
     }
 }
 
-public class DataGridItem
+public class DataGridItem : ViewModelBase
 {
-    public string Name { get; set; }
-    public string Value { get; set; }
+    private string _name = string.Empty;
+    private string _value = string.Empty;
+    public string Name
+    {
+        get => _name;
+        set => RaiseAndSetIfChanged(ref _name, value);
+    }
+    public string Value
+    {
+        get => _value;
+        set => RaiseAndSetIfChanged(ref _value, value);
+    }
 }
 
 
