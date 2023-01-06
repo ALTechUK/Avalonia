@@ -1022,10 +1022,19 @@ namespace Avalonia.Controls
             DataGridRow dataGridRow = GetGeneratedRow(dataContext);
             if (dataGridRow == null)
             {
-                dataGridRow = DisplayData.GetUsedRow() ?? new DataGridRow();
+                DataGridRow usedRow = DisplayData.GetUsedRow();
+                dataGridRow = usedRow ?? new DataGridRow();
                 dataGridRow.Index = rowIndex;
                 dataGridRow.Slot = slot;
                 dataGridRow.OwningGrid = this;
+                //if reusing a row and the data context has changed to a new row (DataGridCollectionView.NewItemPlaceholder)
+                //then recreate the cells so we don't get binding errors
+                if (usedRow != null && dataContext == DataGridCollectionView.NewItemPlaceholder 
+                    && dataGridRow.DataContext != DataGridCollectionView.NewItemPlaceholder)
+                {
+                    foreach (DataGridCell cell in dataGridRow.Cells)
+                        cell.Content = cell.OwningColumn.GenerateElementInternal(cell, dataContext);
+                }
                 dataGridRow.DataContext = dataContext;
                 if (RowTheme is {} rowTheme)
                 {

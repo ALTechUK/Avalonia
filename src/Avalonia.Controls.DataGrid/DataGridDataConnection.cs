@@ -772,12 +772,6 @@ namespace Avalonia.Controls
         private void AddNewItemRow(int slot)
         {
             _owner.InsertRowAt(slot);
-            //since the row might have been resused we need to clear it out by remaking the content so it doesn't show 
-            //stale binding values
-            DataGridRow row = _owner.GetRowFromItem(DataGridCollectionView.NewItemPlaceholder);
-            if(row.IsRecycled)
-                foreach (DataGridCell cell in row.Cells)
-                    cell.Content = cell.OwningColumn.GenerateElementInternal(cell, DataGridCollectionView.NewItemPlaceholder);
         }
 
         /// <summary>
