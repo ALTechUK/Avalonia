@@ -9,6 +9,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Metadata;
 using Avalonia.Styling;
 
@@ -150,7 +151,13 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
 
         if (Binding != null && dataItem != DataGridCollectionView.NewItemPlaceholder)
         {
-            textBlockElement.Bind(TextBlock.TextProperty, Binding);
+            if (DisplayMemberBinding != null)
+            {
+                textBlockElement.SetValue(StyledElement.DataContextProperty, dataItem, BindingPriority.Style);
+                textBlockElement.Bind(TextBlock.TextProperty, DisplayMemberBinding);
+            }
+            else
+                textBlockElement.Bind(TextBlock.TextProperty, Binding);
         }
         return textBlockElement;
 
@@ -177,5 +184,23 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
         DataGridHelper.SyncColumnProperty(this, content, ItemTemplateProperty);
         DataGridHelper.SyncColumnProperty(this, content, SelectedItemTemplateProperty);
         DataGridHelper.SyncColumnProperty(this, content, DisplayMemberBindingProperty);
+    }
+
+    public override bool IsReadOnly 
+    {   
+        get
+        {
+            if (OwningGrid == null)
+                return base.IsReadOnly;
+            if (OwningGrid.IsReadOnly)
+                return true;
+
+            string path = (Binding as Binding)?.Path ?? (Binding as CompiledBindingExtension)?.Path.ToString();
+            return OwningGrid.DataConnection.PropertyIsReadOnly(path, out _);
+        }
+        set
+        {
+            base.IsReadOnly = value;
+        }
     }
 }
