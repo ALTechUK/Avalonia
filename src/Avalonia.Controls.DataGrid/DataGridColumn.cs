@@ -801,7 +801,7 @@ namespace Avalonia.Controls
         { }
 
         /// <summary>
-        /// When overridden in a derived class, called when a cell in the colum exist editing mode.
+        /// When overridden in a derived class, called when a cell in the column exits editing mode.
         /// </summary>
         protected virtual void EndCellEdit()
         {}
