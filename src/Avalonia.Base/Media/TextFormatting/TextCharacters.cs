@@ -66,11 +66,6 @@ namespace Avalonia.Media.TextFormatting
             TextRunProperties textRunProperties
             )
         {
-            if (length <= 0)
-            {
-                throw new ArgumentOutOfRangeException("length", "ParameterMustBeGreaterThanZero");
-            }
-
             if (textRunProperties.FontRenderingEmSize <= 0)
             {
                 throw new ArgumentOutOfRangeException("textRunProperties.FontRenderingEmSize", "ParameterMustBeGreaterThanZero");
