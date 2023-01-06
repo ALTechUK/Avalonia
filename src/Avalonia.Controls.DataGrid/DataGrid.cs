@@ -4182,6 +4182,7 @@ namespace Avalonia.Controls
 
             if (exitEditingMode)
             {
+                CurrentColumn.EndCellEditInternal();
                 _editingColumnIndex = -1;
                 editingCell.UpdatePseudoClasses();
 

@@ -3,6 +3,7 @@
 // Please see http://go.microsoft.com/fwlink/?LinkID=131993 for details.
 // All other rights reserved.
 
+using System;
 using Avalonia.Controls.Templates;
 using Avalonia.Controls.Utils;
 using Avalonia.Input;
@@ -55,17 +56,30 @@ namespace Avalonia.Controls
             get => _cellEditingCellTemplate;
             set => SetAndRaise(CellEditingTemplateProperty, ref _cellEditingCellTemplate, value);
         }
-        
-        private static void OnCellTemplateChanged(AvaloniaPropertyChangedEventArgs e)
+
+        private bool _forceGenerateCellFromTemplate;
+
+        protected override void EndCellEdit()
         {
-            var oldValue = (IDataTemplate)e.OldValue;
-            var value = (IDataTemplate)e.NewValue;
+            //the next call to generate element should not resuse the current content as we need to exit edit mode
+            _forceGenerateCellFromTemplate = true;
+            base.EndCellEdit();
+        }
+
+        private void Grid_RowEditEnded(object sender, DataGridRowEditEndedEventArgs e)
+        {
+            _forceGenerateCellFromTemplate = true;
         }
 
         protected override Control GenerateElement(DataGridCell cell, object dataItem)
         {
             if (CellTemplate != null)
             {
+                if (_forceGenerateCellFromTemplate)
+                {
+                    _forceGenerateCellFromTemplate = false;
+                    return CellTemplate.Build(dataItem);
+                }
                 return (CellTemplate is IRecyclingDataTemplate recyclingDataTemplate)
                     ? recyclingDataTemplate.Build(dataItem, cell.Content as Control)
                     : CellTemplate.Build(dataItem);
