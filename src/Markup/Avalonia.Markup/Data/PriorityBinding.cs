@@ -109,6 +109,7 @@ namespace Avalonia.Data
                 if (value != AvaloniaProperty.UnsetValue && value != BindingOperations.DoNothing)
                 {
                     result = value;
+                    break;
                 }
             }
 
