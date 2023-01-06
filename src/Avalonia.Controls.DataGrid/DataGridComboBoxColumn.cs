@@ -153,7 +153,7 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
         {
             if (DisplayMemberBinding != null)
             {
-                textBlockElement.SetValue(StyledElement.DataContextProperty, dataItem, BindingPriority.Style);
+                textBlockElement.Bind(StyledElement.DataContextProperty, Binding);
                 textBlockElement.Bind(TextBlock.TextProperty, DisplayMemberBinding);
             }
             else
