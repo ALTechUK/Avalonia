@@ -192,12 +192,21 @@ namespace Avalonia.Controls
                 }
             }
         }
-
         private bool CanAddNew
         {
-            get => _owner.CanUserAddRows 
-                && (EditableCollectionView?.CanAddNew ?? false)
-                && !(EditableCollectionView?.IsAddingNew ?? false);
+            get
+            {
+                if(!_owner.CanUserAddRows)
+                    return false;
+                if (EditableCollectionView == null)
+                    return false;
+                if (EditableCollectionView is DataGridCollectionView dataGridCollectionView && !dataGridCollectionView.SourceCanAddNew)
+                    return false;
+                if (EditableCollectionView.IsAddingNew)
+                    return false;
+
+                return true;
+            }
         }
 
         public bool CanRemove
