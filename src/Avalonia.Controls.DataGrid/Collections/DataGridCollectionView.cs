@@ -383,9 +383,16 @@ namespace Avalonia.Collections
         {
             get
             {
-                return !IsEditingItem &&
-                    (SourceList != null && !SourceList.IsFixedSize && CanConstructItem);
+                return !IsEditingItem && SourceCanAddNew;
             }
+        }
+
+        /// <summary>
+        /// Gets a value indicating if the souce list can add items
+        /// </summary>
+        internal bool SourceCanAddNew
+        {
+            get => SourceList != null && !SourceList.IsFixedSize && CanConstructItem;
         }
 
         /// <summary>
