@@ -1027,13 +1027,22 @@ namespace Avalonia.Controls
                 dataGridRow.Index = rowIndex;
                 dataGridRow.Slot = slot;
                 dataGridRow.OwningGrid = this;
-                //if reusing a row and the data context has changed to a new row (DataGridCollectionView.NewItemPlaceholder)
-                //then recreate the cells so we don't get binding errors
-                if (usedRow != null && dataContext == DataGridCollectionView.NewItemPlaceholder 
-                    && dataGridRow.DataContext != DataGridCollectionView.NewItemPlaceholder)
+                if (usedRow != null)
                 {
-                    foreach (DataGridCell cell in dataGridRow.Cells)
-                        cell.Content = cell.OwningColumn.GenerateElementInternal(cell, dataContext);
+                    //if the context has changed to a new row we want to recreate to avoid binding errors
+                    //cells bound to property on context will fail, recreating removes bindings
+                    bool contextChangedToNewItem = 
+                        dataContext == DataGridCollectionView.NewItemPlaceholder
+                        && dataGridRow.DataContext != DataGridCollectionView.NewItemPlaceholder;
+
+                    //if the context changed from the new item we need to recreate so the bindings are created
+                    bool contextChangedFromNewItem =
+                        dataContext != DataGridCollectionView.NewItemPlaceholder
+                        && dataGridRow.DataContext == DataGridCollectionView.NewItemPlaceholder;
+
+                    if(contextChangedFromNewItem || contextChangedToNewItem)
+                        foreach (DataGridCell cell in dataGridRow.Cells)
+                            cell.Content = cell.OwningColumn.GenerateElementInternal(cell, dataContext);
                 }
                 dataGridRow.DataContext = dataContext;
                 if (RowTheme is {} rowTheme)
