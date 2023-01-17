@@ -2131,6 +2131,8 @@ namespace Avalonia.Controls
             if (DataConnection.DataSource != null && !DataConnection.EventsWired)
             {
                 DataConnection.WireEvents(DataConnection.DataSource);
+                //since the datasource may have changed refresh the view
+                InitializeElements(false /*recycleRows*/);
             }
         }
 
