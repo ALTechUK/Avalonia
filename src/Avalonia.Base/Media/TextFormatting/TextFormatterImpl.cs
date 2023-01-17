@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Avalonia.Media.TextFormatting.Unicode;
 using Avalonia.Utilities;
 
@@ -220,23 +222,15 @@ namespace Avalonia.Media.TextFormatting
                                     break;
                                 }
 
-                                if (shapeableRun.CanShapeTogether(nextRun))
+                                if (shapeableRun.BidiLevel == nextRun.BidiLevel
+                                    && TryJoinContiguousMemories(shapeableRun.CharacterBufferReference.CharacterBuffer, 
+                                                                 nextRun.CharacterBufferReference.CharacterBuffer, out var joinedText)
+                                    && shapeableRun.CanShapeTogether(nextRun))
                                 {
                                     groupedRuns.Add(nextRun);
-
-                                    length += nextRun.Length;
-
-                                    if (offsetToFirstCharacter > nextRun.CharacterBufferReference.OffsetToFirstChar)
-                                    {
-                                        offsetToFirstCharacter = nextRun.CharacterBufferReference.OffsetToFirstChar;
-                                    }
-
-                                    characterBufferReference = new CharacterBufferReference(characterBufferReference.CharacterBuffer, offsetToFirstCharacter);
-
                                     index++;
-
                                     shapeableRun = nextRun;
-
+                                    characterBufferReference = new(joinedText);
                                     continue;
                                 }
 
@@ -256,6 +250,69 @@ namespace Avalonia.Media.TextFormatting
             }
 
             return drawableTextRuns;
+        }
+
+        /// <summary>
+        /// Tries to join two potnetially contiguous memory regions.
+        /// </summary>
+        /// <param name="x">The first memory region.</param>
+        /// <param name="y">The second memory region.</param>
+        /// <param name="joinedMemory">On success, a memory region representing the union of the two regions.</param>
+        /// <returns>true if the two regions were contigous; false otherwise.</returns>
+        private static bool TryJoinContiguousMemories(ReadOnlyMemory<char> x, ReadOnlyMemory<char> y,
+            out ReadOnlyMemory<char> joinedMemory)
+        {
+            if (MemoryMarshal.TryGetString(x, out var xString, out var xStart, out var xLength))
+            {
+                if (MemoryMarshal.TryGetString(y, out var yString, out var yStart, out var yLength)
+                    && ReferenceEquals(xString, yString)
+                    && TryGetContiguousStart(xStart, xLength, yStart, yLength, out var joinedStart))
+                {
+                    joinedMemory = xString.AsMemory(joinedStart, xLength + yLength);
+                    return true;
+                }
+            }
+
+            else if (MemoryMarshal.TryGetArray(x, out var xSegment))
+            {
+                if (MemoryMarshal.TryGetArray(y, out var ySegment)
+                    && ReferenceEquals(xSegment.Array, ySegment.Array)
+                    && TryGetContiguousStart(xSegment.Offset, xSegment.Count, ySegment.Offset, ySegment.Count, out var joinedStart))
+                {
+                    joinedMemory = xSegment.Array.AsMemory(joinedStart, xSegment.Count + ySegment.Count);
+                    return true;
+                }
+            }
+
+            else if (MemoryMarshal.TryGetMemoryManager(x, out MemoryManager<char>? xManager, out xStart, out xLength))
+            {
+                if (MemoryMarshal.TryGetMemoryManager(y, out MemoryManager<char>? yManager, out var yStart, out var yLength)
+                    && ReferenceEquals(xManager, yManager)
+                    && TryGetContiguousStart(xStart, xLength, yStart, yLength, out var joinedStart))
+                {
+                    joinedMemory = xManager.Memory.Slice(joinedStart, xLength + yLength);
+                    return true;
+                }
+            }
+
+            joinedMemory = default;
+            return false;
+
+            static bool TryGetContiguousStart(int xStart, int xLength, int yStart, int yLength, out int joinedStart)
+            {
+                var xRange = (Start: xStart, Length: xLength);
+                var yRange = (Start: yStart, Length: yLength);
+
+                var (firstRange, secondRange) = xStart <= yStart ? (xRange, yRange) : (yRange, xRange);
+                if (firstRange.Start + firstRange.Length == secondRange.Start)
+                {
+                    joinedStart = firstRange.Start;
+                    return true;
+                }
+
+                joinedStart = default;
+                return false;
+            }
         }
 
         private static IReadOnlyList<ShapedTextCharacters> ShapeTogether(
