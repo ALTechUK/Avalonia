@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Microsoft.Build.Framework;
 
 namespace Avalonia.Build.Tasks
@@ -13,6 +14,7 @@ namespace Avalonia.Build.Tasks
             Enum.TryParse(ReportImportance, true, out MessageImportance outputImportance);
             var writtenFilePaths = new List<string>();
 
+            CopyFailRetryDelayMs = CopyFailRetryDelayMs == 0 ? 100 : CopyFailRetryDelayMs;
             OutputPath ??= AssemblyFile;
             RefOutputPath ??= RefAssemblyFile;
             var outputPdb = GetPdbPath(OutputPath);
@@ -24,17 +26,17 @@ namespace Avalonia.Build.Tasks
             {
                 var originalCopyPathRef = Path.ChangeExtension(OriginalCopyPath, ".ref.dll");
 
-                File.Copy(AssemblyFile, OriginalCopyPath, true);
+                MultipleTryRun(() => File.Copy(AssemblyFile, OriginalCopyPath, true));
                 writtenFilePaths.Add(OriginalCopyPath);
                 input = OriginalCopyPath;
-                File.Delete(AssemblyFile);
+                MultipleTryRun(() => File.Delete(AssemblyFile));
 
                 if (File.Exists(inputPdb))
                 {
                     var copyPdb = GetPdbPath(OriginalCopyPath);
-                    File.Copy(inputPdb, copyPdb, true);
+                    MultipleTryRun(() => File.Copy(inputPdb, copyPdb, true));
                     writtenFilePaths.Add(copyPdb);
-                    File.Delete(inputPdb);
+                    MultipleTryRun(() => File.Delete(inputPdb));
                     inputPdb = copyPdb;
                 }
                 
@@ -42,7 +44,7 @@ namespace Avalonia.Build.Tasks
                 {
                     // We also copy ref assembly just for case if needed later for testing.
                     // But do not remove the original one, as MSBuild actually complains about it with multi-thread compiling.
-                    File.Copy(RefAssemblyFile, originalCopyPathRef, true);
+                    MultipleTryRun(() => File.Copy(RefAssemblyFile, originalCopyPathRef, true));
                     writtenFilePaths.Add(originalCopyPathRef);
                     refInput = originalCopyPathRef;
                 }
@@ -65,9 +67,9 @@ namespace Avalonia.Build.Tasks
 
             if (!res.WrittenFile)
             {
-                File.Copy(input, OutputPath, true);
+                MultipleTryRun(() => File.Copy(input, OutputPath, true));
                 if (File.Exists(inputPdb))
-                    File.Copy(inputPdb, outputPdb, true);
+                    MultipleTryRun(() => File.Copy(inputPdb, outputPdb, true));
             }
             else if (!string.IsNullOrWhiteSpace(RefOutputPath) && File.Exists(RefOutputPath))
                 writtenFilePaths.Add(RefOutputPath);
@@ -78,6 +80,36 @@ namespace Avalonia.Build.Tasks
 
             WrittenFilePaths = writtenFilePaths.ToArray();
             return true;
+        }
+
+        /// <summary>
+        /// Try running some work and if an exception is raised wait and try a couple more times
+        /// </summary>
+        /// <remarks>
+        /// Sometimes a copy action can fail so we work around that by just waiting a bit for any other build to finish.
+        /// 
+        /// This happens regularly if the same project is built more than once (perhaps due to publishing to multiple outputs)
+        /// the most common offender is the copy inputPdb -> copyPdb (by default copy to original.pdb) since the pdb is still
+        /// in use by some part of msbuild? so a small delay gets around this
+        /// </remarks>
+        void MultipleTryRun(Action work)
+        {
+            int retryCount = 3;
+            do
+            {
+                try
+                { 
+                    work();
+                    break;
+                }
+                catch
+                {
+                    Thread.Sleep(CopyFailRetryDelayMs); //wait just a bit
+                    if (retryCount-- == 0)
+                        throw;
+                }
+            }
+            while (retryCount > 0);
         }
 
         string GetPdbPath(string p)
@@ -121,6 +153,8 @@ namespace Avalonia.Build.Tasks
 
         public bool DebuggerLaunch { get; set; }
 
+        public int CopyFailRetryDelayMs { get; set; }
+        
         [Output]
         public string[] WrittenFilePaths { get; private set; } = Array.Empty<string>();
     }
