@@ -5,6 +5,7 @@
     <AvaloniaXamlReportImportance Condition="'$(AvaloniaXamlReportImportance)' == ''">low</AvaloniaXamlReportImportance>
     <_AvaloniaSkipXamlCompilation Condition="'$(_AvaloniaSkipXamlCompilation)' == ''">false</_AvaloniaSkipXamlCompilation>
     <AvaloniaUseCompiledBindingsByDefault Condition="'$(AvaloniaUseCompiledBindingsByDefault)' == ''">false</AvaloniaUseCompiledBindingsByDefault>
+    <AvaloniaXamlCompileCopyRetryDelay Condition="'$(AvaloniaXamlCompileCopyRetryDelay)' == ''">100</AvaloniaXamlCompileCopyRetryDelay>
   </PropertyGroup>
 
   <!-- Unfortunately we have to update default items in .targets since custom nuget props are improted before Microsoft.NET.Sdk.DefaultItems.props -->
@@ -131,7 +132,8 @@
       DelaySign="$(DelaySign)"
       SkipXamlCompilation="$(_AvaloniaSkipXamlCompilation)"
       DebuggerLaunch="$(AvaloniaXamlIlDebuggerLaunch)"
-      DefaultCompileBindings="$(AvaloniaUseCompiledBindingsByDefault)">
+      DefaultCompileBindings="$(AvaloniaUseCompiledBindingsByDefault)"
+      CopyFailRetryDelayMs="$(AvaloniaXamlCompileCopyRetryDelay)">
       <Output TaskParameter="WrittenFilePaths" ItemName="FileWrites" />
     </CompileAvaloniaXamlTask>
     <Exec
