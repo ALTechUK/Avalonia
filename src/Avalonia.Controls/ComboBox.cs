@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Avalonia.Automation.Peers;
 using Avalonia.Controls.Metadata;
+using Avalonia.Reactive;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Controls.Templates;
@@ -12,7 +13,6 @@ using Avalonia.Media;
 using Avalonia.Reactive;
 using Avalonia.VisualTree;
 using Avalonia.Controls.Metadata;
-using System.Reactive.Linq;
 using Avalonia.Data;
 
 namespace Avalonia.Controls
@@ -222,15 +222,6 @@ namespace Avalonia.Controls
         {
             get => GetValue(SelectedItemTemplateProperty);
             set => SetValue(SelectedItemTemplateProperty, value);
-        }
-
-        /// <inheritdoc/>
-        protected override IItemContainerGenerator CreateItemContainerGenerator()
-        {
-            return new ItemContainerGenerator<ComboBoxItem>(
-                this,
-                ComboBoxItem.ContentProperty,
-                ComboBoxItem.ContentTemplateProperty);
         }
 
         /// <inheritdoc/>

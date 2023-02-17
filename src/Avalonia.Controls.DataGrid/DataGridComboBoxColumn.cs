@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia.Collections;
-using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Interactivity;
@@ -17,6 +12,7 @@ namespace Avalonia.Controls;
 public class DataGridComboBoxColumn : DataGridBoundColumn
 {
     [AssignBinding]
+    [InheritDataTypeFromItems(nameof(DataGrid.Items), AncestorType = typeof(DataGrid))]
     public virtual IBinding SelectedItemBinding
     {
         get => Binding;
@@ -49,6 +45,7 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
     /// <summary>
     /// Gets or sets the data template used to display the item in the combo box (not the dropdown)
     /// </summary>
+    [InheritDataTypeFromItems(nameof(DataGrid.Items), AncestorType = typeof(DataGrid))]
     public IDataTemplate SelectedItemTemplate
     {
         get => GetValue(SelectedItemTemplateProperty);
@@ -64,6 +61,7 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
     /// <summary>
     /// Gets or sets the data template used to display the items in the control.
     /// </summary>
+    [InheritDataTypeFromItems(nameof(DataGrid.Items), AncestorType = typeof(DataGrid))]
     public IDataTemplate ItemTemplate
     {
         get => GetValue(ItemTemplateProperty);
@@ -80,6 +78,7 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
     /// Gets or sets the <see cref="IBinding"/> to use for binding to the display member of each item.
     /// </summary>
     [AssignBinding]
+    [InheritDataTypeFromItems(nameof(DataGrid.Items), AncestorType = typeof(DataGrid))]
     public IBinding DisplayMemberBinding
     {
         get => GetValue(DisplayMemberBindingProperty);
