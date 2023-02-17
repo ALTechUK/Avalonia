@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reactive.Linq;
 using Avalonia.Data.Converters;
 using Avalonia.Metadata;
+using Avalonia.Reactive;
 
 namespace Avalonia.Data
 {
@@ -74,8 +74,8 @@ namespace Avalonia.Data
 
             var children = Bindings.Select(x => x.Initiate(target, null));
 
-            var input = children.Select(x => x?.Observable!)
-                                .Where(x => x is not null)
+            var input = children.Select(x => x?.Source)
+                                .Where(x => x is not null)!
                                 .CombineLatest()
                                 .Select(BoundValuesGetFirstOrDefault)
                                 .Select(x => converter == null ? x : converter.Convert(x, targetType, null, CultureInfo.CurrentCulture));

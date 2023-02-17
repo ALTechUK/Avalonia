@@ -2,15 +2,11 @@
     xmlns="https://github.com/avaloniaui" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:Class="Sandbox.App">
+  <Application.RequestedThemeVariant>
+    <ThemeVariant>Light</ThemeVariant>
+  </Application.RequestedThemeVariant>
     <Application.Styles>
-<<<<<<< HEAD
-        <FluentTheme />
-=======
-      <FluentTheme Mode="Dark"/>
+      <FluentTheme />
       <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
-      <!--<SimpleTheme Mode="Dark"/>
-        <StyleInclude x:Key="DataGridSimple" Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml" />
-      -->
->>>>>>> 08cd91768 (WIP combobox column + update sandbox)
     </Application.Styles>
 </Application>
