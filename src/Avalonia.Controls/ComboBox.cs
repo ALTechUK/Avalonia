@@ -12,6 +12,7 @@ using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Controls.Metadata;
 using Avalonia.Data;
+using Avalonia.Metadata;
 
 namespace Avalonia.Controls
 {
@@ -218,6 +219,7 @@ namespace Avalonia.Controls
         /// <summary>
         /// Gets or sets the data template used to display the item in the combo box when collapsed
         /// </summary>
+        [InheritDataTypeFromItems(nameof(Items))]
         public IDataTemplate? SelectedItemTemplate
         {
             get => GetValue(SelectedItemTemplateProperty);
