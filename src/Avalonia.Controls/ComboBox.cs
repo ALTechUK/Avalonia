@@ -10,9 +10,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Reactive;
 using Avalonia.VisualTree;
-using Avalonia.Controls.Metadata;
 using Avalonia.Data;
 using Avalonia.Metadata;
 
@@ -89,12 +87,8 @@ namespace Avalonia.Controls
         /// <summary>
         /// Defines the <see cref="Text"/> property
         /// </summary>
-        public static readonly DirectProperty<ComboBox, string?> TextProperty =
-            TextBlock.TextProperty.AddOwner<ComboBox>(
-                x => x.Text,
-                (x, v) => x.Text = v,
-                unsetValue: string.Empty,
-                defaultBindingMode: Data.BindingMode.TwoWay);
+        public static readonly StyledProperty< string?> TextProperty =
+            TextBlock.TextProperty.AddOwner<ComboBox>(new(string.Empty, BindingMode.TwoWay));
 
         /// <summary>
         /// Defines the <see cref="SelectedItemTemplate"/> property.
@@ -102,12 +96,10 @@ namespace Avalonia.Controls
         public static readonly StyledProperty<IDataTemplate?> SelectedItemTemplateProperty =
             AvaloniaProperty.Register<ComboBox, IDataTemplate?>(nameof(SelectedItemTemplate));
 
-        private bool _isDropDownOpen;
         private bool _isEditable;
         private Popup? _popup;
         private TextBox? _inputText;
         private object? _selectionBoxItem;
-        private string? _text;
         private bool _ignoreNextInputTextUpdate;
         private readonly CompositeDisposable _subscriptionsOnOpen = new CompositeDisposable();
 
@@ -121,7 +113,7 @@ namespace Avalonia.Controls
             IsTextSearchEnabledProperty.OverrideDefaultValue<ComboBox>(true);
             TextProperty.Changed.AddClassHandler<ComboBox>((x, e) => x.TextChanged(e));
             //when the items change we need to simulate a text change to validate the text being an item or not and selecting it
-            ItemsProperty.Changed.AddClassHandler<ComboBox>((x, e) => x.TextChanged(
+            ItemsSourceProperty.Changed.AddClassHandler<ComboBox>((x, e) => x.TextChanged(
                 new AvaloniaPropertyChangedEventArgs<string?>(e.Sender, TextProperty, x.Text, x.Text, e.Priority)));
         }
 
@@ -212,14 +204,14 @@ namespace Avalonia.Controls
         /// </summary>
         public string? Text
         {
-            get => _text;
-            set => SetAndRaise(TextProperty, ref _text, value);
+            get => GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
 
         /// <summary>
         /// Gets or sets the data template used to display the item in the combo box when collapsed
         /// </summary>
-        [InheritDataTypeFromItems(nameof(Items))]
+        [InheritDataTypeFromItems(nameof(ItemsSource))]
         public IDataTemplate? SelectedItemTemplate
         {
             get => GetValue(SelectedItemTemplateProperty);
@@ -527,22 +519,7 @@ namespace Avalonia.Controls
             }
             else
             {
-                if(ItemTemplate is null && DisplayMemberBinding is { } binding)
-                {
-                    var template = new FuncDataTemplate<object?>((_, _) =>
-                    new TextBlock
-                    {
-                        [TextBlock.DataContextProperty] = item,
-                        [!TextBlock.TextProperty] = binding,
-                    });
-                    var text = template.Build(item);
-                    SelectionBoxItem = text;
-                }
-                else
-                {
-                    SelectionBoxItem = item;
-                }
-                
+                SelectionBoxItem = item;
             }
         }
 

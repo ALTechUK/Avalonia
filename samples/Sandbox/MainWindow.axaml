@@ -29,10 +29,12 @@
     <NativeMenuBar/>
     <TextBlock Text="{Binding Selected.Name, StringFormat=Sel Name: {0}}"/>
     <TextBlock Text="{Binding SelectedTextItem, StringFormat=Sel Text: {0}}"/>
+    <TextBlock Text="{Binding ItemText, StringFormat=Item Text: {0}}"/>
+    <TextBlock Text="{Binding DGIValue, StringFormat=DgiVal: {0}}"/>
     
-    <ComboBox Items="{Binding DataGridItems}" SelectedItem="{Binding Selected}">
+    <ComboBox ItemsSource="{Binding DataGridItems}" SelectedItem="{Binding Selected}">
       <ComboBox.ItemTemplate>
-        <DataTemplate x:DataType="local:DataGridItem">
+        <DataTemplate>
           <StackPanel Orientation="Horizontal" Spacing="20">
             <TextBlock Text="{Binding Name}"/>
             <TextBlock Text="{Binding Value}"/>            
@@ -41,13 +43,13 @@
       </ComboBox.ItemTemplate>
 
       <ComboBox.SelectedItemTemplate>
-        <DataTemplate x:DataType="local:DataGridItem">
+        <DataTemplate>
           <TextBlock Text="{Binding Value}"/>
         </DataTemplate>
       </ComboBox.SelectedItemTemplate>
     </ComboBox>
 
-    <ComboBox Items="{Binding DataGridItems}" SelectedItem="{Binding Selected}">
+    <ComboBox ItemsSource="{Binding DataGridItems}" SelectedItem="{Binding Selected}">
       <ComboBox.ItemTemplate>
         <DataTemplate>
           <TextBlock Text="{Binding Value}"/>
@@ -55,16 +57,26 @@
       </ComboBox.ItemTemplate>
     </ComboBox>
 
-    <ComboBox Items="{Binding TextItems}" SelectedItem="{Binding SelectedTextItem}"/>
+    <ComboBox ItemsSource="{Binding TextItems}" SelectedItem="{Binding SelectedTextItem}" Text="{Binding ItemText}" IsEditable="True"/>
 
     <StackPanel Orientation="Horizontal">
-      <DataGrid Items="{Binding DataGridItems}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Disabled"
+      <TextBlock Text="DGIValue"/>
+      
+      <ComboBox ItemsSource="{Binding DataGridItems}" 
+                SelectedValueBinding="{Binding Value}" 
+                DisplayMemberBinding="{Binding Name}"
+                SelectedValue="{Binding DGIValue}"/>
+    </StackPanel>
+    
+    <StackPanel Orientation="Horizontal">
+      <DataGrid ItemsSource="{Binding DataGridItems}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Disabled"
                 CanUserAddRows="true" CanUserDeleteRows="True">
         <DataGrid.Columns>
-          <DataGridTextColumn Header="Name" Binding="{Binding Name}" x:DataType="local:DataGridItem" />
-          <DataGridComboBoxColumn Header="Value" x:DataType="local:DataGridItem"
-                                  SelectedItemBinding="{Binding Value}" 
-                                  Items="{ReflectionBinding $parent.DataContext.TextItems}"
+          <DataGridTextColumn Header="Name" Binding="{Binding Name}"  />
+          <DataGridComboBoxColumn Header="Value" 
+                                  SelectedItemBinding="{Binding Value}"
+                                  ItemsSource="{ReflectionBinding $parent.DataContext.TextItems}"
+                                  
                                   />
                                   <!--We're binding items to a string list not DataGridItem so no need for display member binding
                                   selected item binding takes care of that
@@ -72,7 +84,7 @@
         </DataGrid.Columns>
       </DataGrid>
 
-      <ListBox Items="{Binding DataGridItems}">
+      <ListBox ItemsSource="{Binding DataGridItems}">
         <ListBox.ItemTemplate>
           <DataTemplate x:DataType="local:DataGridItem">
             <StackPanel Orientation="Horizontal">
