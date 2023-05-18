@@ -20,13 +20,25 @@ public class ViewModel : ViewModelBase
         set => RaiseAndSetIfChanged(ref _selectedTextItem, value);
     }
 
+    string _itemText = "Item C";
+    public string ItemText
+    {
+        get => _itemText;
+        set => RaiseAndSetIfChanged(ref _itemText, value);
+    }
+
     public AvaloniaList<string> TextItems { get; } = new()
     {
         "Item a", "Item b", "Item C", "item d"
     };
 
     public AvaloniaList<DataGridItem> DataGridItems { get; }
-
+    string _dgiValue = string.Empty;
+    public string DGIValue
+    {
+        get => _dgiValue;
+        set => RaiseAndSetIfChanged(ref _dgiValue, value);
+    }
     public ViewModel()
     {
         DataGridItems = new()

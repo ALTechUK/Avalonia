@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Avalonia.Collections;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Interactivity;
@@ -12,28 +13,64 @@ namespace Avalonia.Controls;
 public class DataGridComboBoxColumn : DataGridBoundColumn
 {
     [AssignBinding]
-    [InheritDataTypeFromItems(nameof(DataGrid.Items), AncestorType = typeof(DataGrid))]
+    [InheritDataTypeFromItems(nameof(DataGrid.ItemsSource), AncestorType = typeof(DataGrid))]
     public virtual IBinding SelectedItemBinding
     {
         get => Binding;
         set => Binding = value;
     }
-    
 
     /// <summary>
-    /// Defines the <see cref="Items"/> property.
+    /// Defines the <see cref="SelectedValue"/> property
     /// </summary>
-    public static readonly DirectProperty<DataGridComboBoxColumn, IEnumerable> ItemsProperty =
-        ItemsControl.ItemsProperty.AddOwner<DataGridComboBoxColumn>(o => o.Items, (o, v) => o.Items = v);
+    public static readonly StyledProperty<object> SelectedValueProperty =
+        SelectingItemsControl.SelectedValueProperty.AddOwner<DataGridComboBoxColumn>();
+    
+    /// <summary>
+    /// Gets or sets the value of the selected item, obtained using 
+    /// <see cref="SelectedValueBinding"/>
+    /// </summary>
+    public object SelectedValue
+    {
+        get => GetValue(SelectedValueProperty);
+        set => SetValue(SelectedValueProperty, value);
+    }
+
+
+
+    /// <summary>
+    /// Defines the <see cref="SelectedValueBinding"/> property
+    /// </summary>
+    public static readonly StyledProperty<IBinding> SelectedValueBindingProperty =
+        SelectingItemsControl.SelectedValueBindingProperty.AddOwner<DataGridComboBoxColumn>();
+
+    /// <summary>
+    /// Gets the <see cref="IBinding"/> instance used to obtain the 
+    /// <see cref="SelectedValue"/> property
+    /// </summary>
+    [AssignBinding]
+    [InheritDataTypeFromItems(nameof(DataGrid.ItemsSource), AncestorType = typeof(DataGrid))]
+    public IBinding SelectedValueBinding
+    {
+        get => GetValue(SelectedValueBindingProperty);
+        set => SetValue(SelectedValueBindingProperty, value);
+    }
+
+
+    /// <summary>
+    /// Defines the <see cref="ItemsSource"/> property.
+    /// </summary>
+    public static readonly StyledProperty<IEnumerable> ItemsSourceProperty =
+        ItemsControl.ItemsSourceProperty.AddOwner<DataGridComboBoxColumn>();
 
     /// <summary>
     /// Gets or sets the items to display.
     /// </summary>
     [Content]
-    public IEnumerable Items
+    public IEnumerable ItemsSource
     {
-        get => _items;
-        set => SetAndRaise(ItemsProperty, ref _items, value);
+        get => GetValue(ItemsSourceProperty);
+        set => SetValue(ItemsSourceProperty, value);
     }
 
     /// <summary>
@@ -45,7 +82,7 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
     /// <summary>
     /// Gets or sets the data template used to display the item in the combo box (not the dropdown)
     /// </summary>
-    [InheritDataTypeFromItems(nameof(DataGrid.Items), AncestorType = typeof(DataGrid))]
+    [InheritDataTypeFromItems(nameof(DataGrid.ItemsSource), AncestorType = typeof(DataGrid))]
     public IDataTemplate SelectedItemTemplate
     {
         get => GetValue(SelectedItemTemplateProperty);
@@ -61,7 +98,7 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
     /// <summary>
     /// Gets or sets the data template used to display the items in the control.
     /// </summary>
-    [InheritDataTypeFromItems(nameof(DataGrid.Items), AncestorType = typeof(DataGrid))]
+    [InheritDataTypeFromItems(nameof(DataGrid.ItemsSource), AncestorType = typeof(DataGrid))]
     public IDataTemplate ItemTemplate
     {
         get => GetValue(ItemTemplateProperty);
@@ -78,14 +115,15 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
     /// Gets or sets the <see cref="IBinding"/> to use for binding to the display member of each item.
     /// </summary>
     [AssignBinding]
-    [InheritDataTypeFromItems(nameof(DataGrid.Items), AncestorType = typeof(DataGrid))]
+    [InheritDataTypeFromItems(nameof(DataGrid.ItemsSource), AncestorType = typeof(DataGrid))]
     public IBinding DisplayMemberBinding
     {
         get => GetValue(DisplayMemberBindingProperty);
         set => SetValue(DisplayMemberBindingProperty, value);
     }
 
-    private IEnumerable _items = new AvaloniaList<object>();
+    
+
     private readonly Lazy<ControlTheme> _cellComboBoxTheme;
     private readonly Lazy<ControlTheme> _cellTextBlockTheme;
 
@@ -105,7 +143,7 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
 
         if(change.Property == SelectedItemTemplateProperty 
             || change.Property == DisplayMemberBindingProperty
-            || change.Property == ItemsProperty)
+            || change.Property == ItemsSourceProperty)
         {
             NotifyPropertyChanged(change.Property.Name);
         }
@@ -178,11 +216,12 @@ public class DataGridComboBoxColumn : DataGridBoundColumn
 
     private void SyncProperties(AvaloniaObject content)
     {
-        //using the helper doesn't work for direct properties so set manually
-        content.SetValue(ItemsControl.ItemsProperty, Items);
+        DataGridHelper.SyncColumnProperty(this, content, ItemsSourceProperty);
         DataGridHelper.SyncColumnProperty(this, content, ItemTemplateProperty);
         DataGridHelper.SyncColumnProperty(this, content, SelectedItemTemplateProperty);
         DataGridHelper.SyncColumnProperty(this, content, DisplayMemberBindingProperty);
+        DataGridHelper.SyncColumnProperty(this, content, SelectedValueProperty);
+        DataGridHelper.SyncColumnProperty(this, content, SelectedValueBindingProperty);
     }
 
     public override bool IsReadOnly 
