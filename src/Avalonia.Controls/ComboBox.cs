@@ -529,10 +529,13 @@ namespace Avalonia.Controls
                 return;
 
             _ignoreNextInputTextUpdate = true;
+            string text;
             if (item is IContentControl cbItem)
-                Text = cbItem.Content?.ToString() ?? string.Empty;
+                text = cbItem.Content?.ToString() ?? string.Empty;
             else
-                Text = item?.ToString() ?? string.Empty;
+                text = item?.ToString() ?? string.Empty;
+            
+            SetCurrentValue(TextProperty, text);
             _ignoreNextInputTextUpdate = false;
         }
 
@@ -628,7 +631,7 @@ namespace Avalonia.Controls
             SelectedIndex = selectedIdx;
             SelectedItem = selectedItem;
             if (settingSelectedItem)
-                Text = selectedItemText ?? newVal;
+                SetCurrentValue(TextProperty, selectedItemText ?? newVal);
             _ignoreNextInputTextUpdate = false;
         }
 
@@ -642,13 +645,14 @@ namespace Avalonia.Controls
             {
                 //similar to the FuncDataTemplate.Default, but instead of binding the text to the datacontext,
                 //we bind the text the same way ItemContainerGenerator does it
-                SelectedItemTemplate = new FuncDataTemplate<object?>(
+                SetCurrentValue(SelectedItemTemplateProperty, new FuncDataTemplate<object?>(
                     (data, s) =>
                     {
                         TextBlock result = new();
                         result.Bind(TextBlock.TextProperty, DisplayMemberBinding, BindingPriority.Style);
-                        return result;                        
-                    }, true);
+                        return result;
+                    }, true)
+                );
             }
         }
     }
