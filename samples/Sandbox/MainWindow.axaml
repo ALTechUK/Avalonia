@@ -30,21 +30,20 @@
     <TextBlock Text="{Binding Selected.Name, StringFormat=Sel Name: {0}}"/>
     <TextBlock Text="{Binding SelectedTextItem, StringFormat=Sel Text: {0}}"/>
     <TextBlock Text="{Binding ItemText, StringFormat=Item Text: {0}}"/>
-    <TextBlock Text="{Binding DGIValue, StringFormat=DgiVal: {0}}"/>
     
     <ComboBox ItemsSource="{Binding DataGridItems}" SelectedItem="{Binding Selected}">
       <ComboBox.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal" Spacing="20">
             <TextBlock Text="{Binding Name}"/>
-            <TextBlock Text="{Binding Value}"/>            
+            <TextBlock Text="{Binding DGI_Value}"/>            
           </StackPanel>
         </DataTemplate>
       </ComboBox.ItemTemplate>
 
       <ComboBox.SelectedItemTemplate>
         <DataTemplate>
-          <TextBlock Text="{Binding Value}"/>
+          <TextBlock Text="{Binding DGI_Value}"/>
         </DataTemplate>
       </ComboBox.SelectedItemTemplate>
     </ComboBox>
@@ -52,7 +51,7 @@
     <ComboBox ItemsSource="{Binding DataGridItems}" SelectedItem="{Binding Selected}">
       <ComboBox.ItemTemplate>
         <DataTemplate>
-          <TextBlock Text="{Binding Value}"/>
+          <TextBlock Text="{Binding DGI_Value}"/>
         </DataTemplate>
       </ComboBox.ItemTemplate>
     </ComboBox>
@@ -60,27 +59,22 @@
     <ComboBox ItemsSource="{Binding TextItems}" SelectedItem="{Binding SelectedTextItem}" Text="{Binding ItemText}" IsEditable="True"/>
 
     <StackPanel Orientation="Horizontal">
-      <TextBlock Text="DGIValue"/>
-      
-      <ComboBox ItemsSource="{Binding DataGridItems}" 
-                SelectedValueBinding="{Binding Value}" 
-                DisplayMemberBinding="{Binding Name}"
-                SelectedValue="{Binding DGIValue}"/>
-    </StackPanel>
-    
-    <StackPanel Orientation="Horizontal">
       <DataGrid ItemsSource="{Binding DataGridItems}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Disabled"
                 CanUserAddRows="true" CanUserDeleteRows="True">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Name" Binding="{Binding Name}"  />
           <DataGridComboBoxColumn Header="Value" 
-                                  SelectedItemBinding="{Binding Value}"
-                                  ItemsSource="{ReflectionBinding $parent.DataContext.TextItems}"
-                                  
+                                  ItemsSource="{x:Static local:ViewModel.DgiValueOptions}"
+                                  SelectedValue="{Binding DGI_Value}"
+                                  SelectedValueBinding="{Binding Value}"
+                                  DisplayMemberBinding="{Binding Display}"
                                   />
-                                  <!--We're binding items to a string list not DataGridItem so no need for display member binding
-                                  selected item binding takes care of that
-                                  DisplayMemberBinding="{Binding Value}"-->
+
+          <DataGridComboBoxColumn Header="Selected Item"
+                                  ItemsSource="{x:Static local:ViewModel.DgiValueOptions}"
+                                  SelectedItemBinding="{Binding ComplexItem}"
+                                  DisplayMemberBinding="{Binding Display}"
+                                  />
         </DataGrid.Columns>
       </DataGrid>
 
@@ -90,7 +84,9 @@
             <StackPanel Orientation="Horizontal">
               <TextBlock Text="{Binding Name, TargetNullValue=Blank}"/>
               <TextBlock Text=" : "/>
-              <TextBlock Text="{Binding Value, TargetNullValue=Blank}"/>
+              <TextBlock Text="{Binding DGI_Value, TargetNullValue=Blank}"/>
+              <TextBlock Text=" : Complex:- "/>
+              <TextBlock Text="{Binding ComplexItem, TargetNullValue=Blank}"/>
             </StackPanel>
           </DataTemplate>
         </ListBox.ItemTemplate>

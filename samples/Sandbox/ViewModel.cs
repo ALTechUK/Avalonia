@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Collections;
@@ -33,19 +34,30 @@ public class ViewModel : ViewModelBase
     };
 
     public AvaloniaList<DataGridItem> DataGridItems { get; }
-    string _dgiValue = string.Empty;
-    public string DGIValue
+    public static List<ComplexItem> DgiValueOptions { get; } = new()
     {
-        get => _dgiValue;
-        set => RaiseAndSetIfChanged(ref _dgiValue, value);
-    }
+        new() { Display = "An item", Value = "ListItem1" },
+        new() { Display = "second", Value = "ListItem2" }
+    };
+
     public ViewModel()
     {
         DataGridItems = new()
         {
-            new() { Name = "First", Value = TextItems[0] },
-            new() { Name = "Second", Value = TextItems[1] }
+            new() { Name = "First", DGI_Value = DgiValueOptions[0].Value, ComplexItem = DgiValueOptions[0] },
+            new() { Name = "Second", DGI_Value = DgiValueOptions[1].Value, ComplexItem = DgiValueOptions[1] }
         };
+    }
+}
+
+public class ComplexItem
+{
+    public string Display { get; set; }
+    public string Value { get; set; }
+
+    public override string ToString()
+    {
+        return $"disp: {Display}. Val: {Value}";
     }
 }
 
@@ -53,15 +65,21 @@ public class DataGridItem : ViewModelBase
 {
     private string _name = string.Empty;
     private string _value = string.Empty;
+    private ComplexItem _complexItem;
     public string Name
     {
         get => _name;
         set => RaiseAndSetIfChanged(ref _name, value);
     }
-    public string Value
+    public string DGI_Value
     {
         get => _value;
         set => RaiseAndSetIfChanged(ref _value, value);
+    }
+    public ComplexItem ComplexItem
+    {
+        get => _complexItem;
+        set => RaiseAndSetIfChanged(ref _complexItem, value);
     }
 }
 
