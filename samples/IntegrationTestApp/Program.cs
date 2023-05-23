@@ -20,10 +20,10 @@ namespace IntegrationTestApp
                 {
                     OverlayPopups = OverlayPopups,
                 })
-                .With(new AvaloniaNativePlatformOptions
+                /*.With(new AvaloniaNativePlatformOptions
                 {
                     OverlayPopups = OverlayPopups,
-                })
+                })*/
                 .StartWithClassicDesktopLifetime(args);
         }
 
