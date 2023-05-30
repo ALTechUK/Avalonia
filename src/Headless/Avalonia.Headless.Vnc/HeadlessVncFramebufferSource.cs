@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.Globalization;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Platform;
 using Avalonia.Threading;
 using RemoteViewing.Vnc;
 using RemoteViewing.Vnc.Server;
@@ -17,6 +16,7 @@ namespace Avalonia.Headless.Vnc
 
         private VncButton _previousButtons;
         private RawInputModifiers _keyState;
+
         public HeadlessVncFramebufferSource(VncServerSession session, Window window)
         {
             Window = window;
@@ -47,6 +47,13 @@ namespace Avalonia.Headless.Vnc
                     foreach (var btn in CheckedButtons)
                         if (!_previousButtons.HasAllFlags(btn) && buttons.HasAllFlags(btn))
                             Window?.MouseDown(pt, TranslateButton(btn), modifiers);
+
+                    if (buttons == VncButton.ScrollUp)
+                        Window?.MouseWheel(pt, Vector.One, modifiers);
+
+                    else if (buttons == VncButton.ScrollDown)
+                        Window?.MouseWheel(pt, Vector.One.Negate(), modifiers);
+
                     _previousButtons = buttons;
                 }, DispatcherPriority.Input);
             };
@@ -56,13 +63,19 @@ namespace Avalonia.Headless.Vnc
                 Key? key = TranslateKey(args.Keysym);
                 if (key == null)
                     return;
+
+                //we only care about text input on key up
+                string? inputText = args.Pressed ? null : KeyToText(args.Keysym);
                 Dispatcher.UIThread.Post(() =>
                 {
                     if (args.Pressed)
                         Window?.KeyPress(key.Value, _keyState);
                     else
                         Window?.KeyRelease(key.Value, _keyState);
-                });
+
+                    if (inputText != null)
+                        Window?.KeyTextInput(inputText);
+                }, DispatcherPriority.Input);
             };
         }
 
@@ -87,7 +100,29 @@ namespace Avalonia.Headless.Vnc
             return true;
         }
 
-        private Key? TranslateKey(KeySym key) =>
+        private static string? KeyToText(KeySym key)
+        {
+            int keyCode = (int)key;
+            if (key >= KeySym.Space && key <= KeySym.AsciiTilde)
+                return new string((char)key, 1);
+
+            //handle as normal text chars 0-9
+            if (key >= KeySym.NumPad0 && key <= KeySym.NumPad9)
+                return new string((char)(key - 65408), 1);
+
+            switch (key)
+            {
+                case KeySym.NumPadAdd: return "+";
+                case KeySym.NumPadSubtract: return "-";
+                case KeySym.NumPadMultiply: return "*";
+                case KeySym.NumPadDivide: return "/";
+                case KeySym.NumPadSeparator: return NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+            }
+
+            return null;
+        }
+
+        private static Key? TranslateKey(KeySym key) =>
             key switch
             {
                 KeySym.Backspace => Key.Back,
