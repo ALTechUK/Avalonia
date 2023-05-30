@@ -59,6 +59,12 @@ public static class HeadlessWindowExtensions
         RunJobsOnImpl(topLevel, w => w.TextInput(text));
 
     /// <summary>
+    /// Simulates a text input event on the headless window/toplevel
+    /// </summary>
+    public static void KeyTextInput(this TopLevel topLevel, string text) =>
+        RunJobsAndGetImpl(topLevel).TextInput(text);
+
+    /// <summary>
     /// Simulates mouse down on the headless window/toplevel.
     /// </summary>
     public static void MouseDown(this TopLevel topLevel, Point point, MouseButton button,

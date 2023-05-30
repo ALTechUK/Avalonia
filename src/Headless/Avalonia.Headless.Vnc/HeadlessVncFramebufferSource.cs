@@ -48,7 +48,6 @@ namespace Avalonia.Headless.Vnc
                         if (!_previousButtons.HasFlag(btn) && buttons.HasFlag(btn))
                             Window?.MouseDown(pt, TranslateButton(btn), modifiers);
 
-
                     if (buttons == VncButton.ScrollUp)
                         Window?.MouseWheel(pt, Vector.One, modifiers);
 
