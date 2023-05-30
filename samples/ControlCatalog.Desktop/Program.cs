@@ -13,9 +13,7 @@ namespace ControlCatalog
         [STAThread]
         public static int Main(string[] args)
             => BuildAvaloniaApp()
-            .StartWithHeadlessVncPlatform("0.0.0.0", 5900, args ?? Array.Empty<string>(), Avalonia.Controls.ShutdownMode.OnExplicitShutdown);
-
-        //.StartWithClassicDesktopLifetime(args);
+            .StartWithClassicDesktopLifetime(args);
 
         /// <summary>
         /// This method is needed for IDE previewer infrastructure
