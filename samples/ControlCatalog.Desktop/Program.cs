@@ -10,7 +10,8 @@ namespace ControlCatalog
     {
         [STAThread]
         public static int Main(string[] args)
-            => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            => BuildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(args);
 
         /// <summary>
         /// This method is needed for IDE previewer infrastructure

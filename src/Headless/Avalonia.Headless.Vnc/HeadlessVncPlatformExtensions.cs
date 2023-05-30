@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Headless;
 using Avalonia.Headless.Vnc;
+using Avalonia.Platform;
 using RemoteViewing.Vnc;
 using RemoteViewing.Vnc.Server;
 
@@ -15,14 +16,16 @@ namespace Avalonia
         public static int StartWithHeadlessVncPlatform(
             this AppBuilder builder,
             string host, int port,
-            string[] args, ShutdownMode shutdownMode = ShutdownMode.OnLastWindowClose)
+            string[] args, ShutdownMode shutdownMode = ShutdownMode.OnLastWindowClose,
+            PixelFormat? frameBufferFormat = null)
         {
             var tcpServer = new TcpListener(host == null ? IPAddress.Loopback : IPAddress.Parse(host), port);
             tcpServer.Start();    
             return builder
                 .UseHeadless(new AvaloniaHeadlessPlatformOptions
                 {
-                    UseHeadlessDrawing = false
+                    UseHeadlessDrawing = false,
+                    FrameBufferFormat = frameBufferFormat ?? PixelFormat.Bgra8888
                 })
                 .AfterSetup(_ =>
                 {
