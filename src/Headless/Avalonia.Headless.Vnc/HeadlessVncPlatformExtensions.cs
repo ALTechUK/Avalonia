@@ -16,7 +16,8 @@ namespace Avalonia
         public static int StartWithHeadlessVncPlatform(
             this AppBuilder builder,
             string host, int port,
-            string[] args, ShutdownMode shutdownMode = ShutdownMode.OnLastWindowClose)
+            string[] args, ShutdownMode shutdownMode = ShutdownMode.OnLastWindowClose,
+            PixelFormat? frameBufferFormat = null)
         {
             var tcpServer = new TcpListener(host == null ? IPAddress.Loopback : IPAddress.Parse(host), port);
             tcpServer.Start();    
@@ -24,7 +25,7 @@ namespace Avalonia
                 .UseHeadless(new AvaloniaHeadlessPlatformOptions
                 {
                     UseHeadlessDrawing = false,
-                    FrameBufferFormat = PixelFormat.Bgra8888
+                    FrameBufferFormat = frameBufferFormat ?? PixelFormat.Bgra8888
                 })
                 .AfterSetup(_ =>
                 {
