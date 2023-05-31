@@ -37,7 +37,7 @@ public static class HeadlessWindowExtensions
                 "To capture a rendered frame, make sure that headless application was initialized with '.UseSkia()' and disabled 'UseHeadlessDrawing' in the 'AvaloniaHeadlessPlatformOptions'.");
         }
 
-        return GetImpl(topLevel).GetLastRenderedFrame();
+        return GetImpl(topLevel)?.GetLastRenderedFrame();
     }
 
     /// <summary>
@@ -58,11 +58,6 @@ public static class HeadlessWindowExtensions
     public static void KeyTextInput(this TopLevel topLevel, string text) =>
         RunJobsOnImpl(topLevel, w => w.TextInput(text));
 
-    /// <summary>
-    /// Simulates a text input event on the headless window/toplevel
-    /// </summary>
-    public static void KeyTextInput(this TopLevel topLevel, string text) =>
-        RunJobsAndGetImpl(topLevel).TextInput(text);
 
     /// <summary>
     /// Simulates mouse down on the headless window/toplevel.
@@ -104,13 +99,14 @@ public static class HeadlessWindowExtensions
         Dispatcher.UIThread.RunJobs();
         AvaloniaHeadlessPlatform.ForceRenderTimerTick();
         Dispatcher.UIThread.RunJobs();
-        action(GetImpl(topLevel));
+        IHeadlessWindow? impl = GetImpl(topLevel);
+        if (impl != null)
+            action(impl);
         Dispatcher.UIThread.RunJobs();
     }
 
-    private static IHeadlessWindow GetImpl(this TopLevel topLevel)
+    private static IHeadlessWindow? GetImpl(this TopLevel topLevel)
     {
-        return topLevel.PlatformImpl as IHeadlessWindow ??
-               throw new InvalidOperationException("TopLevel must be a headless window.");
+        return topLevel.PlatformImpl as IHeadlessWindow;
     }
 }
