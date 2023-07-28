@@ -330,6 +330,7 @@ namespace Avalonia.Controls
             {
                 if (_popup?.IsInsidePopup(source) == true)
                 {
+                    e.Handled = true;
                     return;
                 }
             }
@@ -654,6 +655,15 @@ namespace Avalonia.Controls
                     }, true)
                 );
             }
+        }
+
+        /// <summary>
+        /// Clears the selection
+        /// </summary>
+        public void Clear()
+        {
+            SelectedItem = null;
+            SelectedIndex = -1;
         }
     }
 }
