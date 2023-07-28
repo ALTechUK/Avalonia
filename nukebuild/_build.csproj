@@ -22,8 +22,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-
-    <PackageDownload Include="Microsoft.DotNet.ApiCompat.Tool" Version="[7.0.305]" />
   </ItemGroup>
 
   <ItemGroup>

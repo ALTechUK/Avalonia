@@ -22,12 +22,6 @@ public partial class Build
     [Parameter(Name = "skip-previewer")]
     public bool SkipPreviewer { get; set; }
 
-    [Parameter(Name = "api-baseline")]
-    public string ApiValidationBaseline { get; set; }
-    
-    [Parameter(Name = "update-api-suppression")]
-    public bool? UpdateApiValidationSuppression { get; set; }
-
     public class BuildParameters
     {
         public string Configuration { get; }
@@ -111,9 +105,7 @@ public partial class Build
             // VERSION
             Version = b.ForceNugetVersion ?? GetVersion();
 
-            ApiValidationBaseline = b.ApiValidationBaseline ?? new Version(new Version(Version).Major, 0).ToString();
-            UpdateApiValidationSuppression = b.UpdateApiValidationSuppression ?? IsLocalBuild;
-            
+           
             if (IsRunningOnAzure)
             {
                 if (!IsNuGetRelease)
@@ -136,7 +128,6 @@ public partial class Build
             FileZipSuffix = Version + ".zip";
             ZipCoreArtifacts = ZipRoot / ("Avalonia-" + FileZipSuffix);
             ZipNuGetArtifacts = ZipRoot / ("Avalonia-NuGet-" + FileZipSuffix);
-            ApiValidationSuppressionFiles = RootDirectory / "api";
         }
 
         string GetVersion()
