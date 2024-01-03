@@ -19,6 +19,7 @@ internal class HeadlessVncConnectionManager
     readonly ShutdownMode _shutdownMode;
     readonly ConcurrentDictionary<string, HeadlessVncFramebufferSource> _vncFrameBuffers = new();
     readonly Stack<Window> _displayWindows;
+    readonly string _framebufferName;
 
     IClassicDesktopStyleApplicationLifetime? _appLifetime;
     Window? _currentWindow;
@@ -30,11 +31,12 @@ internal class HeadlessVncConnectionManager
     public bool ResizeSessionIfContentSizeChanges { get; }
 
     public HeadlessVncConnectionManager(AppBuilder appBuilder, string host, int port, ShutdownMode shutdownMode,
-        bool resizeSessionIfContentSizeChanges)
+        bool resizeSessionIfContentSizeChanges, string framebufferName)
     {
         _tcpListener = new(host == null ? IPAddress.Loopback : IPAddress.Parse(host), port);
         _shutdownMode = shutdownMode;
         _displayWindows = new();
+        _framebufferName = framebufferName;
         ResizeSessionIfContentSizeChanges = resizeSessionIfContentSizeChanges;
 
         appBuilder.AfterSetup(_ =>
@@ -64,7 +66,7 @@ internal class HeadlessVncConnectionManager
             };
             string connectionId = Guid.NewGuid().ToString();
             var session = new VncServerSession();
-            var frameBuffer = new HeadlessVncFramebufferSource(session, DisplayWindow, ResizeSessionIfContentSizeChanges);
+            var frameBuffer = new HeadlessVncFramebufferSource(session, DisplayWindow, ResizeSessionIfContentSizeChanges, _framebufferName);
             _vncFrameBuffers.TryAdd(connectionId, frameBuffer);
 
             session.SetFramebufferSource(frameBuffer);

@@ -28,11 +28,13 @@ namespace Avalonia.Headless.Vnc
         private VncButton _previousButtons;
         private RawInputModifiers _keyState;
 
-        public HeadlessVncFramebufferSource(VncServerSession session, Window window, bool resizeSessionIfContentSizeChanges)
+        public HeadlessVncFramebufferSource(VncServerSession session, Window window, bool resizeSessionIfContentSizeChanges,
+            string framebufferName)
         {
             Window = window;
             _resizeBufferIfContentSizeChanges = resizeSessionIfContentSizeChanges;
-            _framebuffer = new VncFramebuffer("Avalonia", 
+            _framebuffer = new VncFramebuffer(
+                string.IsNullOrEmpty(framebufferName) ? "Avalonia" : framebufferName, 
                 (int)Math.Ceiling(window.ClientSize.Width), 
                 (int)Math.Ceiling(window.ClientSize.Height),
                 VncPixelFormat.RGB32);

@@ -30,14 +30,16 @@ namespace Avalonia
         /// If true then the VNC session will try to resize to match the window size when the window size changes.
         /// This can cause some VNC clients to stop working so use at your own risk.
         /// </param>
+        /// <param name="framebufferName">The framebuffer name. Many VNC clients set their titlebar to this name.</param>
         public static int StartWithHeadlessVncPlatform(
             this AppBuilder builder,
             string host, int port,
             string[] args, ShutdownMode shutdownMode = ShutdownMode.OnLastWindowClose,
             PixelFormat? frameBufferFormat = null,
-            bool resizeSessionIfContentSizeChanges = false)
+            bool resizeSessionIfContentSizeChanges = false,
+            string framebufferName = "Avalonia")
         {
-            HeadlessVncConnectionManager connManager = new(builder, host, port, shutdownMode, resizeSessionIfContentSizeChanges);
+            HeadlessVncConnectionManager connManager = new(builder, host, port, shutdownMode, resizeSessionIfContentSizeChanges, framebufferName);
 
             if (OperatingSystemEx.IsWindows())
                 builder.UseWin32MountedVolumeInfoProvider();
